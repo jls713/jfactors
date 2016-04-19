@@ -1,6 +1,6 @@
 # jfactors
 
-Code associated with the two papers: Evans, Sanders & Geringer-Sameth (2016) (in folder spherical) and Sanders, Evans,  Geringer-Sameth & Dehnen (2016) (in folder flattened).
+Code associated with the two papers: Evans, Sanders & Geringer-Sameth (2016) (in [spherical](spherical/)) and Sanders, Evans,  Geringer-Sameth & Dehnen (2016) (in [flattened](flattened/)).
 
 ## Spherical (Evans, Sanders & Geringer-Sameth 2016)
 
