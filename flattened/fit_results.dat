@@ -1,0 +1,11 @@
+\begin{tabular}{lccc}
+\hline
+\hline
+& View & $\eta$ Oblate ($q<1$) & $\eta$ Prolate ($q>1$)\\
+\hline
+$\mathcal{F}_\mathrm{J}$ & Edge-on&0.534&0.899\\
+&Face-on&-1.647&-1.181\\
+$\mathcal{F}_\mathrm{D}$ & Edge-on&0.056&0.177\\
+&Face-on&-0.335&-0.089\\
+\hline
+\end{tabular}

@@ -1,0 +1,16 @@
+These are the classical dwarfs and ultrafaints with J factors computed by Geringer-Sameth (2015).
+Distances (in kpc) taken from McConnachie (2012) review.
+Projected half-light radii (in pc) taken from McConnachie review. Errors "1" are upper error bars and "2" lower.
+Line-of-sight velocity dispersions are in units km/s
+All dark-matter annihilation and decay data taken from Geringer-Sameth. theta_max is the max angle integrated out to (in degrees). theta_half is the half-light radius angle for dm emission. All J are in units log10(GeV^2cm^-5).
+
+The velocity dispersion for Segue II is the 95% upperbound from Kirby et al. (2013). The associated errors are reported as zero.
+
+The data for RetII is taken from Bonnivard -- they do not report theta_half or dtheta_half so we set it as 0.5 deg.
+
+Pisces II and Hydra II from Kirby (2015).
+
+GrusI and Tucana II from Walker (2015)
+
+Ellipticities from McConnachie (2012). DES dwarfs from Koposov (2015) (Horologium is upper bound, others have asymmetric errorbars), Pisces II from Belokurov (2014), Hydra II from Martin (2015)
+Leo T: in de Jong (2008) the ellipticity is stated to be less than 0.1

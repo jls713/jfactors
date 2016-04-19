@@ -140,14 +140,14 @@ ENV/
 # Temporary data
 .ipynb_checkpoints/
 
-*.dat
 *.ipynb
 *.nb
 *.eps
 *.pdf
-*.txt
 *.output
 wyn_data/*
 *.png
 flattened/archive/*
 flattened/triaxial_results/*
+paper/papers/*
+data_archive/*
