@@ -143,7 +143,6 @@ ENV/
 *.ipynb
 *.nb
 *.eps
-*.pdf
 *.output
 wyn_data/*
 *.png
@@ -151,3 +150,5 @@ flattened/archive/*
 flattened/triaxial_results/*
 paper/papers/*
 data_archive/*
+flattened/*.pdf
+spherical/*.pdf

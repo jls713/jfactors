@@ -1,0 +1,17 @@
+\begin{tabular}{lcccccc}
+\hline
+\hline
+Model & Paper I J & Paper I D & $\log_{10}(\mathrm{J}(0.5^\circ))$& $\log_{10}(\mathrm{D}(0.5^\circ))$& $\mathcal{F}_\mathrm{J}$& $\mathcal{F}_\mathrm{D}$\\
+\hline
+\makecell[l]{Spherical NFW\\ Spherical Plummer}&$18.97$&$17.76$&$18.64$&$17.58$&$0.00$&$0.00$\\
+\\
+\makecell[l]{Oblate NFW, $p=1,\,q=0.4$\\ Oblate Plummer, $p=1,\,q=0.4$}&-&-&$18.45$&$17.62$&$-0.19$&$0.05$\\
+\\
+\makecell[l]{Prolate NFW, $p=1,\,q=2.5$\\ Prolate Plummer, $p=1,\,q=2.5$}&-&-&$19.05$&$17.67$&$0.40$&$0.09$\\
+\\
+\makecell[l]{Near-prolate NFW, $p=0.5$, $q=0.4$\\ Near-prolate cuspy Plummer\\\quad$\alpha_\star=2,\,\beta_\star=5,\,\gamma_\star=1,\,p=0.4,\,q=0.38$}&-&-&$19.01$&$17.78$&$0.37$&$0.20$\\
+\\
+\makecell[l]{Prolate cored DM\\\quad$\alpha_\mathrm{DM}=1,\,\beta_\mathrm{DM}=4,\,\gamma_\mathrm{DM}=0,\,p=1,\,q=2.5$\\ Prolate Plummer, $p=1,\,q=2.5$}&-&-&$18.90$&$17.66$&$0.26$&$0.08$\\
+\\
+\hline
+\end{tabular}
