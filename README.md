@@ -17,12 +17,12 @@ Associated scripts in [flattened](flattened/) and also [C++ code](c++_code/) . T
 
 1. [fig1_flattened.py](flattened/fig1_flattened.py) -- Figure 1
 2. [generate_ret2_table.py](flattened/generate_ret2_table.py) -- Table 1
-3. [compute_J_ret2_sims.p](flattened/compute_J_ret2_sims.py) -> [flattened](flattened/sim_profiles.py) -- Figures 2 & 3
+3. [compute_J_ret2_sims.py](flattened/compute_J_ret2_sims.py) -> [sim_profiles.py](flattened/sim_profiles.py) -- Figures 2 & 3
 4. [flattened.py](flattened/flattened.py) -> Figures 5,6 & 7 & Table 3 (need Wyn's data and output from [C++ code](c++_code/))
 5. [compute_corrections.py](flattened/compute_corrections.py) -- Table 3 & 4
 6. [corr_plot.py](flattened/corr_plot.py) -- Figure 4
 7. [unit_sphere.py](flattened/unit_sphere.py) -- Figure 8
-8. [sampler.py](flattened/sampler.py) -> [flattened](flattened/process_data.py) -- Table 5
+8. [sampler.py](flattened/sampler.py) -> [process_data.py](flattened/process_data.py) -- Table 5
 9. [sampler.py](flattened/sampler.py) -> [ret2_hists.py](flattened/ret2_hists.py) and [all_plot.py](flattened/all_plot.py) -- Figures 9 & 10
 
 The manuscript is in [paper](paper/) along with the data for the tables and plots.
