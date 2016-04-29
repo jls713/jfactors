@@ -50,7 +50,7 @@ angs = np.deg2rad(np.logspace(np.log10(5e-3),np.log10(0.6),30))
 Rhalf = 0.03 ## 30pc
 sig = 3.     ## 3km/s
 G = 4.300918e-6 ## in units solar mass, km/s kpc
-Mhalf = 4.*sig**2*Rhalf/G
+Mhalf = 2.5*sig**2*Rhalf/G  ## Walker formula
 rs = 0.15 ## scale radius of NFW units kpc
 D = 30.   ## distance kpc
 gamma = [0.,0.2,0.4,0.6,0.8,1.,1.2]
@@ -95,8 +95,8 @@ for b,c in zip(beta,sns.color_palette()):
 a[0].fill_between(angs_dimless,min_M,max_M,alpha=0.5,color=sns.color_palette()[0])
 a[1].fill_between(angs_dimless,min_J,max_J,alpha=0.5,color=sns.color_palette()[0])
 a[2].fill_between(angs_dimless,min_D,max_D,alpha=0.5,color=sns.color_palette()[0])
-a[1].plot(angs_dimless,wyns_formulaJ_NFW(sig,Rhalf*1000.,D,np.rad2deg(angs),rs),color='k')
-a[2].plot(angs_dimless,wyns_formulaD_NFW(sig,Rhalf*1000.,D,np.rad2deg(angs),rs),color='k')
+a[1].plot(angs_dimless,wyns_formulaJ_NFW(sig,Rhalf*1000.,D,np.rad2deg(angs),rs,walker_or_wolf="walker"),color='k')
+a[2].plot(angs_dimless,wyns_formulaD_NFW(sig,Rhalf*1000.,D,np.rad2deg(angs),rs,walker_or_wolf="walker"),color='k')
 a[0].semilogx()
 a[1].semilogx()
 a[2].semilogx()

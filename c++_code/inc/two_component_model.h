@@ -30,12 +30,12 @@ public:
 class DoubleProfileModel{
   AlphaBetaGammaDensityProfile *Stars; /* Density profile for the stars */
   AlphaBetaGammaDensityProfile *DM;    /* Density profile for the DM    */
-  double rh; 						   /* half-light radius in kpc      */
-  double slos;			   /* line-of-sight velocity dispersion in km/s */
+  double rh; 						               /* half-light radius in kpc      */
+  double slos;			       /* line-of-sight velocity dispersion in km/s */
   bool use_multipole;      /* option to use multipole expansion         */
-  double rsrdmratio; 					 /* scale radius of stars to DM */
+  double rsrdmratio; 			          		 /* scale radius of stars to DM */
   double rtdmrdmratio,rtsrdmratio;/* tidal radius of stars and DM to DM scale*/
-  VecDoub abg_st, abg_dm;		/* (alpha,beta,gamma) of stars and DM   */
+  VecDoub abg_st, abg_dm;		    /* (alpha,beta,gamma) of stars and DM   */
 public:
 
   DoubleProfileModel(double ba, double ca, double rh=0.049, double slos=3.22, bool use_multipole=true, double rsrdmratio=0.5, double rtdmrdmratio = 10., double rtsrdmratio=9., VecDoub abg_st={2.,5.,0.}, VecDoub abg_dm = {1.,3.,1.});
@@ -59,6 +59,20 @@ public:
    */
   VecDoub J_factor(double theta, double phi, double D, double ang, bool gobby = true, bool with_D = false);
   VecDoub J_factor_old(double theta, double phi, double D, double ang, bool gobby = true, bool with_D = false);
+    /**
+   * @brief compute mass
+   * @details compute mass in cylinder or sphere
+   *
+   * @param theta spherical polar latitude viewing angle
+   * @param phi spherical polar azimuthal viewing angle
+   * @param D distance
+   * @param ang vector of beam angle in deg
+   * @param gobby print progress flag
+   * @param typ mass inside cylinder ('cylinder'), inside ellipsoid
+   * ('ellipsoid') or inside sphere ('sphere')
+   * @return mass
+   */
+  VecDoub MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby = true, std::string typ="cylinder");
     /**
    * @brief compute J-factor correction factor
    *
@@ -111,9 +125,19 @@ public:
    */
    double velocity_ratio(double theta, double phi);
    /**
-    * @brief total velocity dispersion 
+    * @brief total velocity dispersion
     */
    double sigma_tot(void);
+   /**
+    * @brief spherical half-light radius of stellar distribution
+    * @return spherical rh
+    */
+   double spherical_rh(void);
+   /**
+    * @brief projected half-light radius of stellar distribution
+    * @return projected rh
+    */
+   double projected_rh(double,double);
 };
 
 class PaperModel: public DoubleProfileModel{

@@ -51,8 +51,8 @@ def compute_table(filename='ret_results.dat',angle=0.5,geo_factor=True):
 	## 1. Spherical analytic formulae -- note the ellipticity correction
 	##    sqrt(1-e)
 	gf = np.sqrt(1.-RetII.e)
-	sph_J = sJ.wyns_formulaJ_NFW_data(RetII.Velocity_dispersion,rh*1000.*gf,RetII.Distance,[0.5],rh*2.*gf)
-	sph_D = sJ.wyns_formulaD_NFW_data(RetII.Velocity_dispersion,rh*1000.*gf,RetII.Distance,[0.5],rh*2.*gf)
+	sph_J = sJ.wyns_formulaJ_NFW_data(RetII.Velocity_dispersion,rh*1000.*gf,RetII.Distance,[0.5],rh*2.*gf,walker_or_wolf="walker")
+	sph_D = sJ.wyns_formulaD_NFW_data(RetII.Velocity_dispersion,rh*1000.*gf,RetII.Distance,[0.5],rh*2.*gf,walker_or_wolf="walker")
 	print sph_J,sph_D
 	## ========================================================================
 	## 2. Spherical model

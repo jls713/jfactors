@@ -91,7 +91,7 @@ def read_bonnivard_table(Name):
 	''' Reads annihilation data from Bonnivard (2015) '''
 	GEV2cm5toMsol2kpc5 = 2.2482330e-07
 	if Name in bonnivard_names:
-		data = np.genfromtxt('../bonnivard/'+bonnivard_names[Name]+'_Jalphaint_cls.output',
+		data = np.genfromtxt('../data/bonnivard/'+bonnivard_names[Name]+'_Jalphaint_cls.output',
 			     skip_header=5)
 		data = np.delete(data,[2,5],1)
 		df = pd.DataFrame(data,columns=['alpha','J','eJm68','eJp68','eJm95','eJp95'])
@@ -108,7 +108,7 @@ def read_bonnivard_table_decay(Name):
 	''' Reads decay data from Bonnivard (2015)'''
 	GEVcm2toMsolkpc2 = 8.5358230e-15
 	if Name in bonnivard_names:
-		data = np.genfromtxt('../bonnivard/'+bonnivard_names[Name]+'_Dalphaint_cls.output',
+		data = np.genfromtxt('../data/bonnivard/'+bonnivard_names[Name]+'_Dalphaint_cls.output',
 			     skip_header=5)
 		data = np.delete(data,[2,5],1)
 		df = pd.DataFrame(data,columns=['alpha','D','eDm68','eDp68','eDm95','eDp95'])
@@ -123,8 +123,8 @@ def read_bonnivard_table_decay(Name):
 
 def read_ackermann_data():
 	''' Reads data from the Ackermann Fermi-LAT paper '''
-	names = np.genfromtxt('../ackermann/ackermann_dwarfs.dat',skip_header=2,usecols=0,dtype=str)
-	data = np.genfromtxt('../ackermann/ackermann_dwarfs.dat',skip_header=2)[:,4:6]
+	names = np.genfromtxt('../data/ackermann/ackermann_dwarfs.dat',skip_header=2,usecols=0,dtype=str)
+	data = np.genfromtxt('../data/ackermann/ackermann_dwarfs.dat',skip_header=2)[:,4:6]
 	df = pd.DataFrame(data,columns=['J','eJ'])
 	df['name']=names
 	return df
@@ -141,16 +141,20 @@ def make_table(data,geo_factor=True):
 	N=100000
 	WEJ2 = wyns_formulaJ_error_sample(data,gamma=1.,angle='Half_05',N=N,
 	                                  nfw=rnfwrs*data['R_half']*geof/1000.,
-	                                  geo_factor=geo_factor)
+	                                  geo_factor=geo_factor,
+	                                  walker_or_wolf="walker")
 	WED2 = wyns_formulaD_error_sample(data,gamma=1.,angle='Half_05',N=N,
 	                                  nfw=rnfwrs*data['R_half']*geof/1000.,
-	                                  geo_factor=geo_factor)
+	                                  geo_factor=geo_factor,
+	                                  walker_or_wolf="walker")
 	WEJ3 = wyns_formulaJ_error_sample(data,gamma=1.,angle='Max',N=N,
 	                                  nfw=rnfwrs*data['R_half']*geof/1000.,
-	                                  geo_factor=geo_factor)
+	                                  geo_factor=geo_factor,
+	                                  walker_or_wolf="walker")
 	WED3 = wyns_formulaD_error_sample(data,gamma=1.,angle='Max',N=N,
 	                                  nfw=rnfwrs*data['R_half']*geof/1000.,
-	                                  geo_factor=geo_factor)
+	                                  geo_factor=geo_factor,
+	                                  walker_or_wolf="walker")
 
 	outfile=open('dwarfs_Jfactors.dat','w')
 	outfile.write('\\begin{tabular}{llccccc}\n')
@@ -372,6 +376,6 @@ def summary_data_plot():
 
 
 if __name__ == '__main__':
-	data = pd.read_csv('data.dat',sep=' ')
+	data = pd.read_csv('../data/data.dat',sep=' ')
 	make_table(data)
 	exit()

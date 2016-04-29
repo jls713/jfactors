@@ -210,7 +210,7 @@ TEST(Jfactors,DoubleModelProlate){
 	double JJs = DD_sph.J_factor(theta,phi,D,ang,false,false)[0];
 
 	double CC = DD.correction_factor(theta,phi,D,ang,false,true);
-	EXPECT_NEAR(JJ/JJs,CC,0.001);
+	EXPECT_NEAR(JJ/JJs,CC,0.005);
 
 }
 
@@ -319,7 +319,7 @@ TEST(AnalyticProfile,CoredModel5){
 	EXPECT_NEAR(C2.sigma_los(.5*PI,0.),sigma_R_wyn5(1.,2.,q,q)/sqrt(2.),1e-4);
 	EXPECT_NEAR(C2.sigma_los(.5*PI,0.),C2.sigma_los_m(.5*PI,0.),1e-3);
 	C2.scale(0.05,3.);
-	EXPECT_NEAR(C2.J_factor_arbitrary(D,ang,0.,0.),C2.J_factor_face(D,ang),1e+5);
+	EXPECT_NEAR(C2.J_factor_arbitrary(D,ang,0.,0.),C2.J_factor_face(D,ang),1e+6);
 	EXPECT_NEAR(C2.J_factor_arbitrary(D,ang,PI/2.,0.),C2.J_factor_edge(D,ang),1e+7);
 
 	CoredModel C3(nstar,{1.,2.},{1./q,1./q},{1.,1.});
@@ -371,6 +371,8 @@ TEST(AnalyticProfile,CoredModel6){
 	EXPECT_NEAR(Csph.sigma_los(0.,0.),1./sqrt(nstar),1e-4);
 
 	CoredModel C(nstar,{1.,2.},{1.,1.},{1.,1.});
+	auto rg = 2.;
+	EXPECT_NEAR(C.mass_dm(rg),rg*rg*rg/Grav/(rg*rg+4.),1.);
 	C.scale(0.05,3.);
 	EXPECT_NEAR(C.J_factor_edge(D,ang),C.J_factor_face_asymptote(D),1e+5);
 	EXPECT_NEAR(C.J_factor_arbitrary(D,ang,0.,0.),C.J_factor_face(D,ang),1e+5);

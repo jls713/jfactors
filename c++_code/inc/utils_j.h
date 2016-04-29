@@ -6,6 +6,8 @@
 #include <boost/python.hpp>
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
+#include <boost/python/exception_translator.hpp>
+#include <exception>
 #include <boost/python/numeric.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -20,6 +22,7 @@ using namespace boost::python;
 #include <cmath>
 #include <vector>
 #include <string>
+#include <stdexcept>
 #include "../general/utils.h"
 #include "potential.h"
 
@@ -64,7 +67,8 @@ double integrate(integrand_t integrand, c *P, double IE, double AE, std::string 
         NGIVEN, LDXGIVEN, nullptr, NEXTRA, nullptr,STATEFILE,SPIN,
         &nregions, &neval, &fail, integral, error, prob);
     if(err)*err=prod*error[0];
-    if(fail!=0)std::cerr<<"Error: Required accuracy not reached." <<std::endl;
+    if(fail!=0)
+      throw std::runtime_error("Error: Required accuracy not reached.");
     return prod*integral[0];
 }
 
@@ -95,7 +99,7 @@ struct vector_from_ndarray {
   // Determine if obj_ptr can be converted in a std::vector<T>
   static void* convertible(PyObject* obj_ptr) {
     if (!PyArray_Check(obj_ptr)) {
-      std::cerr<<"You have passed a non-numpy array"<<std::endl;
+      throw std::invalid_argument("You have passed a non-numpy array");
       return 0;
     }
     return obj_ptr;

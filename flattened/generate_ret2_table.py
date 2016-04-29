@@ -1,21 +1,20 @@
 ## Make Table 1 of Sanders, Evans & Geringer-Sameth
 ## ============================================================================
 import sys
-sys.path.append('../../code/m2m/')
+sys.path.append('../../../code/m2m/')
 import ret_2
 import spherical_Jfactors as sJ
 import numpy as np
 ## ============================================================================
 ## Data on Reticulum II
 ## ============================================================================
-import ret_22
 RetII = ret_2.RetII
 r_maj_exp = RetII.r_maj_exp ## arcmin
 r_maj = RetII.r_maj #arcmin
 Distance = RetII.Distance #kpc
 Velocity_dispersion = RetII.Velocity_dispersion #km/s
 rh= (r_maj/60./180.*np.pi)*Distance ## in units kpc
-q = 1-.RetII.e
+q = 1-RetII.e
 ## ============================================================================
 ## List of models = (spherical model, oblate and three prolate models)
 ## ============================================================================
@@ -47,8 +46,8 @@ models = [ret_2.stellar_halo_model('ret2_roundNFW_roundPlummer',
 ## ============================================================================
 ## Analytic formulae -- note geometric correction factor sqrt(1-e)
 ## ============================================================================
-sph_JW = sJ.wyns_formulaJ_NFW_data(Velocity_dispersion,rh*1000.*np.sqrt(q),Distance,[0.5],rh*2.*np.sqrt(q))
-sph_DW = sJ.wyns_formulaD_NFW_data(Velocity_dispersion,rh*1000.*np.sqrt(q),Distance,[0.5],rh*2.*np.sqrt(q))
+sph_JW = sJ.wyns_formulaJ_NFW_data(Velocity_dispersion,rh*1000.*np.sqrt(q),Distance,[0.5],rh*2.*np.sqrt(q),walker_or_wolf="walker")
+sph_DW = sJ.wyns_formulaD_NFW_data(Velocity_dispersion,rh*1000.*np.sqrt(q),Distance,[0.5],rh*2.*np.sqrt(q),walker_or_wolf="walker")
 print sph_JW,sph_DW
 ## ============================================================================
 ## Spherical model -- note geometric correction factor sqrt(1-e)

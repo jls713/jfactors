@@ -4,11 +4,11 @@ from spherical_Jfactors import *
 from J_D_table import *
 
 
-num_samples=100000 ## Number of samples used for MCing over errors
+num_samples=50000 ## Number of samples used for MCing over errors
 
 ### Load in required data
-data = pd.read_csv('../data.dat',sep=' ')
-scale_radii=np.genfromtxt('../geringer_sameth_gamma.dat',skip_header=49).T[8]
+data = pd.read_csv('../data/data.dat',sep=' ')
+scale_radii=np.genfromtxt('../data/geringer_sameth_gamma.dat',skip_header=49).T[8]
 scale_radii=np.power(10.,scale_radii)/1000.
 ackermann_data = read_ackermann_data()
 
@@ -47,7 +47,8 @@ def plot_grid(ranges,f,a,plot_out,Name,geo_factor=True):
                             data['D'][i],data['eD'][i],
                             a,[1e-10,1e-10], ## angle with no associated errors
                             gamma=1.,N=num_samples,
-                            nfw=rnfwrs*data['R_half'][i]*geof/1000.),
+                            nfw=rnfwrs*data['R_half'][i]*geof/1000.,
+                          walker_or_wolf="walker"),
                           angles)])[0]
 
         a[k][j].fill_between(angles,J.T[0]-J.T[1],J.T[0]+J.T[2],
@@ -73,7 +74,8 @@ def plot_grid(ranges,f,a,plot_out,Name,geo_factor=True):
                            [data['eR_half2'][i]*geof,data['eR_half1'][i]*geof],
                             data['D'][i],data['eD'][i],
                             a,[1e-10,1e-10], ## angle with no associated errors
-                            gamma=1.,N=num_samples), angles)])[0]
+                            gamma=1.,N=num_samples,
+                          walker_or_wolf="walker"), angles)])[0]
 
         a[k][j].plot(angles,J.T[0],color=sns.color_palette()[2])
         a[k][j].fill_between(angles,J.T[0]-J.T[1],J.T[0]+J.T[2],
@@ -88,7 +90,8 @@ def plot_grid(ranges,f,a,plot_out,Name,geo_factor=True):
                            [data['eR_half2'][i]*geof,data['eR_half1'][i]*geof],
                             data['D'][i],data['eD'][i],
                             a,[1e-10,1e-10], ## angle with no associated errors
-                            gamma=0.51,N=num_samples), angles)])[0]
+                            gamma=0.51,N=num_samples,
+                          walker_or_wolf="walker"), angles)])[0]
 
         a[k][j].plot(angles,J.T[0],color=sns.color_palette()[4])
         a[k][j].fill_between(angles,J.T[0]-J.T[1],J.T[0]+J.T[2],
@@ -100,7 +103,7 @@ def plot_grid(ranges,f,a,plot_out,Name,geo_factor=True):
         else:
             a[k][j].set_xticklabels([])
         if(j==0):
-            a[k][j].set_ylabel(r'$\log_{10}(J(\theta)/\,\mathrm{GeV^2\,cm}^{-5})$')
+            a[k][j].set_ylabel(r'$\log_{10}(\mathrm{J}(\theta)/\,\mathrm{GeV^2\,cm}^{-5})$')
         else:
             a[k][j].set_yticklabels([])
         a[k][j].annotate(posh_names[data['Name'][i]], xy=(0.95,0.05),
@@ -116,14 +119,21 @@ def plot_grid(ranges,f,a,plot_out,Name,geo_factor=True):
         if(data['Jmax'][i]==data['Jmax'][i]):
             GS = a[k][j].errorbar([data['theta_max'][i]],[data['Jmax'][i]],yerr=[[data['eJmax2'][i]],[data['eJmax1'][i]]],fmt='.',color='k',capsize=0.)
             legendEntries.append(GS)
-            legendText.append('Geringer-Sameth et al. (2015)')
+
+            if(data['Name'][i]=="ReticulumII"):
+                legendText.append('Bonnivard et al. (2015b)')
+            elif(data['Name'][i]=="TucanaII"):
+                legendText.append('Walker et al. (2016)')
+            else:
+                legendText.append('Geringer-Sameth et al. (2015)')
 
         bonni_data = read_bonnivard_table(data['Name'][i])
 
         if not bonni_data.empty:
             B, = a[k][j].plot(bonni_data['alpha'],bonni_data['J'],color='k')
-            legendEntries.append(B)
-            legendText.append('Bonnivard et al. (2015)')
+            if data['Name'][i] not in ["ReticulumII","TucanaII"]:
+                legendEntries.append(B)
+                legendText.append('Bonnivard et al. (2015)')
             l,=a[k][j].plot(bonni_data['alpha'],bonni_data['eJm68'],ls='dashed',color='k')
             l.set_dashes((2,1))
             l,=a[k][j].plot(bonni_data['alpha'],bonni_data['eJp68'],ls='dashed',color='k')
@@ -132,10 +142,11 @@ def plot_grid(ranges,f,a,plot_out,Name,geo_factor=True):
         ackermann = ackermann_data[ackermann_data.name==data['Name'][i]]
         if(len(ackermann)>0):
             A = a[k][j].errorbar(0.5,ackermann['J'],yerr=ackermann['eJ'],ms=3,color='r',fmt='d',capsize=0.)
-            legendEntries.append(A)
-            legendText.append('Ackermann et al. (2014)')
+            if data['Name'][i] not in ["ReticulumII","TucanaII"]:
+                legendEntries.append(A)
+                legendText.append('Ackermann et al. (2014)')
 
-        if(j==0 and k==0):
+        if((j==0 and k==0) or (data['Name'][i]=="ReticulumII" or data['Name'][i]=="TucanaII")):
             lgd = a[k][j].legend(legendEntries,legendText,numpoints=1,loc='upper left',fontsize=8)
 
         j+=1
@@ -185,7 +196,8 @@ def plot_decay_grid(ranges,f,a,plot_out,Name,geo_factor=True):
                            data['D'][i],data['eD'][i],
                            a,[1e-10,1e-10], ## angle with no associated errors
                            gamma=1.,N=num_samples,
-                           nfw=rnfwrs*data['R_half'][i]*geof/1000.),
+                           nfw=rnfwrs*data['R_half'][i]*geof/1000.,
+                          walker_or_wolf="walker"),
                         angles)])[0]
 
 
@@ -211,7 +223,8 @@ def plot_decay_grid(ranges,f,a,plot_out,Name,geo_factor=True):
                            [data['eR_half2'][i]*geof,data['eR_half1'][i]*geof],
                            data['D'][i],data['eD'][i],
                            a,[1e-10,1e-10], ## angle with no associated errors
-                           gamma=1.01,N=num_samples), angles)])[0]
+                           gamma=1.01,N=num_samples,
+                          walker_or_wolf="walker"), angles)])[0]
         a[k][j].plot(angles,J.T[0],color=sns.color_palette()[2])
         a[k][j].fill_between(angles,J.T[0]-J.T[1],J.T[0]+J.T[2],
                  alpha=0.5,color=sns.color_palette()[2],label=r'$\gamma=1.01$')
@@ -224,7 +237,8 @@ def plot_decay_grid(ranges,f,a,plot_out,Name,geo_factor=True):
                            [data['eR_half2'][i]*geof,data['eR_half1'][i]*geof],
                            data['D'][i],data['eD'][i],
                            a,[1e-10,1e-10], ## angle with no associated errors
-                           gamma=1.49,N=num_samples), angles)])[0]
+                           gamma=1.49,N=num_samples,
+                          walker_or_wolf="walker"), angles)])[0]
         a[k][j].plot(angles,J.T[0],color=sns.color_palette()[4])
         a[k][j].fill_between(angles,J.T[0]-J.T[1],J.T[0]+J.T[2],
                  alpha=0.5,color=sns.color_palette()[4],label=r'$\gamma=1.49$')
@@ -234,7 +248,7 @@ def plot_decay_grid(ranges,f,a,plot_out,Name,geo_factor=True):
         else:
             a[k][j].set_xticklabels([])
         if(j==0):
-            a[k][j].set_ylabel(r'$\log_{10}(D(\theta)/\,\mathrm{GeV\,cm}^{-2})$')
+            a[k][j].set_ylabel(r'$\log_{10}(\mathrm{D}(\theta)/\,\mathrm{GeV\,cm}^{-2})$')
         else:
             a[k][j].set_yticklabels([])
 
@@ -251,20 +265,26 @@ def plot_decay_grid(ranges,f,a,plot_out,Name,geo_factor=True):
         if(data['Jmax'][i]==data['Jmax'][i]):
             GS = a[k][j].errorbar([data['theta_max'][i]],[data['dJmax'][i]],yerr=[[data['edJmax2'][i]],[data['edJmax1'][i]]],fmt='.',color='k',capsize=0.)
             legendEntries.append(GS)
-            legendText.append('Geringer-Sameth et al. (2015)')
+            if(data['Name'][i]=="ReticulumII"):
+                legendText.append('Bonnivard et al. (2015b)')
+            elif(data['Name'][i]=="TucanaII"):
+                legendText.append('Walker et al. (2016)')
+            else:
+                legendText.append('Geringer-Sameth et al. (2015)')
 
         bonni_data = read_bonnivard_table_decay(data['Name'][i])
 
         if not bonni_data.empty:
             B,=a[k][j].plot(bonni_data['alpha'],bonni_data['D'],color='k')
-            legendEntries.append(B)
-            legendText.append('Bonnivard et al. (2015)')
+            if data['Name'][i] not in ["ReticulumII","TucanaII"]:
+                legendEntries.append(B)
+                legendText.append('Bonnivard et al. (2015)')
             l,=a[k][j].plot(bonni_data['alpha'],bonni_data['eDm68'],ls='dashed',color='k')
             l.set_dashes((2,1))
             l,=a[k][j].plot(bonni_data['alpha'],bonni_data['eDp68'],ls='dashed',color='k')
             l.set_dashes((2,1))
 
-        if(j==0 and k==0):
+        if((j==0 and k==0) or (data['Name'][i] in ["ReticulumII","TucanaII"])):
             lgd = a[k][j].legend(legendEntries,legendText,numpoints=1,loc='upper left',fontsize=8)
 
         j+=1
@@ -281,14 +301,14 @@ def generate_paper_plots():
     ''' Generates the grids of plots for Paper I '''
     using_geo_factor=True
 
-    # f,a=plt.subplots(2,4,figsize=(9,4.5))
-    # plot_grid(range(8),f,a,'cd_grid.pdf','Classical Dwarfs',using_geo_factor)
+    f,a=plt.subplots(2,4,figsize=(9,4.5))
+    plot_grid(range(8),f,a,'cd_grid.pdf','Classical Dwarfs',using_geo_factor)
 
-    # f,a=plt.subplots(4,4,figsize=(9,9))
-    # plot_grid(range(8,23),f,a,'uf_grid.pdf','Ultrafaints',using_geo_factor)
+    f,a=plt.subplots(4,4,figsize=(9,9))
+    plot_grid(range(8,23),f,a,'uf_grid.pdf','Ultrafaints',using_geo_factor)
 
-    # f,a=plt.subplots(1,4,figsize=(9,2.5))
-    # plot_grid(range(23,27),f,[a],'predict_grid.pdf','Predictions',using_geo_factor)
+    f,a=plt.subplots(1,4,figsize=(9,2.5))
+    plot_grid(range(23,27),f,[a],'predict_grid.pdf','Predictions',using_geo_factor)
 
 
     f,a=plt.subplots(2,4,figsize=(9,4.5))

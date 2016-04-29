@@ -78,7 +78,7 @@ f=plt.figure(figsize=[6.6,2.5])
 plt.errorbar(np.arange(len(g)),g.T[7],xerr=None,yerr=[g.T[8],g.T[9]],fmt='d',color=sns.color_palette()[2],ms=3,label='Spherical',capsize=0)
 plt.errorbar(np.arange(len(g))-0.15,g.T[7]+g2.T[1],xerr=None,yerr=[np.sqrt(g.T[8]**2+g2.T[2]**2),np.sqrt(g.T[9]**2+g2.T[3]**2)],fmt='o',color=sns.color_palette()[0],ms=2,label='Oblate',capsize=0)
 plt.errorbar(np.arange(len(g))+0.15,g.T[7]+g2.T[4],xerr=None,yerr=[np.sqrt(g.T[8]**2+g2.T[5]**2),np.sqrt(g.T[9]**2+g2.T[6]**2)],fmt='s',color='k',ms=2,label='Prolate',capsize=0)
-plt.ylim(14.,23.)
+plt.ylim(13.,22.)
 plt.xticks(np.arange(len(g)), map(lambda i:posh_names[i],nam), rotation='vertical')
 [i.set_color(sns.color_palette()[2]) for i in plt.gca().get_xticklabels()[:3]]
 ## Add horizontal line for Ret II errorbar
@@ -97,7 +97,7 @@ ranks = np.empty(len(g), int)
 ranks[temp] = np.arange(len(g))
 print ranks,-g.T[7]-g.T[9]
 for n,i in enumerate(ranks):
-	plt.annotate(i+1,xy=(n,14.9),horizontalalignment='center',verticalalignment='center',color=sns.color_palette()[2])
+	plt.annotate(i+1,xy=(n,13.9),horizontalalignment='center',verticalalignment='center',color=sns.color_palette()[2])
 
 ## Display their ranks in prolate case
 temp = (-g.T[7]-g2.T[4]-np.sqrt(g.T[9]**2+g2.T[6]**2)).argsort()
@@ -105,9 +105,9 @@ ranks = np.empty(len(g), int)
 ranks[temp] = np.arange(len(g))
 print ranks,-g.T[7]-g2.T[4]-np.sqrt(g.T[9]**2+g2.T[6]**2)
 for n,i in enumerate(ranks):
-	plt.annotate(i+1,xy=(n,14.5),horizontalalignment='center',verticalalignment='center',color='k')
+	plt.annotate(i+1,xy=(n,13.5),horizontalalignment='center',verticalalignment='center',color='k')
 
-plt.ylabel(r'$\log_{10}(J(0.5^\circ)/\,\mathrm{GeV^2\,cm}^{-5})$')
+plt.ylabel(r'$\log_{10}(\mathrm{J}(0.5^\circ)/\,\mathrm{GeV^2\,cm}^{-5})$')
 plt.savefig('flattening_corr.pdf',bbox_inches='tight')
 
 ## ============================================================================
@@ -123,7 +123,7 @@ plt.xticks(np.arange(len(g)), map(lambda i:posh_names[i],nam), rotation='vertica
 [i.set_color(sns.color_palette()[2]) for i in plt.gca().get_xticklabels()[:3]]
 plt.legend(loc=1,frameon=False,ncol=3)
 plt.xlim(-1.,len(g))
-plt.ylabel(r'$\log_{10}(D(0.5^\circ)/\,\mathrm{GeV\,cm}^{-2})$')
+plt.ylabel(r'$\log_{10}(\mathrm{D}(0.5^\circ)/\,\mathrm{GeV\,cm}^{-2})$')
 plt.savefig('flattening_corr_D.pdf',bbox_inches='tight')
 
 ## ============================================================================

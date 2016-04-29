@@ -56,7 +56,6 @@ double NFWDensityProfile::D_factor(double D, double ang){
 CoredDMProfile::CoredDMProfile(double rs, double q, double v0):FiniteMassTriaxialDensityProfile({1.,1.,q},false),r_dm(rs),v0(v0){
 	q_phi_dm = .5*sqrt(1.+sqrt(1.+8.*q*q));
 }
-
 double CoredDMProfile::phi_dm(double R, double z){
 	return 0.5*v0*v0*log(r_dm*r_dm+R*R+z*z/q_phi_dm/q_phi_dm);
 }
@@ -108,7 +107,9 @@ double CoredModel::half_light_radius(void){
 	VecDoub abg = staaars.alpha_beta_gamma();
 	return staaars.scale_radius()*sqrt(pow(2.,2./(abg[1]-3.))-1.);
 }
-
+double CoredModel::mass_dm(double r){
+	return dm.M_sphere(1.,r*180./PI);
+}
 // int mass_integrand_cored(const int ndim[],const double y[], const int*fdim, double fval[], void *fdata){
 //     sig_cored_st *P = (sig_cored_st *) fdata;
 //     VecDoub y2(3,0.);

@@ -103,5 +103,5 @@ def compute_corrections(datafile):
 
 ## ============================================================================
 if __name__ == '__main__':
-	compute_corrections('../data.dat')
+	compute_corrections('../data/data.dat')
 ## ============================================================================

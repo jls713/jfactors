@@ -148,9 +148,18 @@ public:
 	CoredModel(double n_star, VecDoub radii, VecDoub flattening, VecDoub norms);
 	inline double dm_flattening(void){return dm.dm_flattening();}
 	inline double scale_radius(void){return staaars.scale_radius();}
-	
+	inline double dm_scale_radius(void){return dm.scale_radius();}
+	inline double dm_norm(void){return dm.amplitude();}
+
 	VecDoub forces_dm(VecDoub X){return dm.forces_dm(X);}
 	double density_star(double R, double z);
+	/**
+	 * @brief mass within sphere of radius r
+	 *
+	 * @param r radius
+	 * @return mass within sphere radius r
+	 */
+	double mass_dm(double r);
 	/**
 	 * @brief total stellar mass
 	 *

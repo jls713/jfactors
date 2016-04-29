@@ -173,7 +173,7 @@ TriaxialDensityProfile::TriaxialDensityProfile(double a, double b, double c, boo
 
 double TriaxialDensityProfile::Triaxiality(double ba, double ca){
   if(ca==1. and ba!=1.)
-    std::cerr<<"b/a<c/a\n";
+    throw std::invalid_argument("b/a<c/a\n");
   if(ca==1. and ba==1.) return 0.;
   return (1.-ba*ba)/(1.-ca*ca);
 }
@@ -297,13 +297,13 @@ double FiniteMassTriaxialDensityProfile::spherical_half_light_radius(void){
 AlphaBetaGammaDensityProfile::AlphaBetaGammaDensityProfile(VecDoub abg, double rho0, double rs, double rt, VecDoub ABC, bool normalize)
     :alpha(abg[0]),beta(abg[1]),gamma(abg[2]),rho0(rho0),rs(rs),rt(rt),FiniteMassTriaxialDensityProfile(ABC,normalize){
       if((gamma>=3. or beta<=3.) and rt<=0.)
-        std::cerr<<"Infinite mass if gamma>3 or beta<3 and rt=0\n";
+        throw std::invalid_argument("Infinite mass if gamma>3 or beta<3 and rt=0\n");
     }
 
 AlphaBetaGammaDensityProfile::AlphaBetaGammaDensityProfile(double alpha, double beta, double gamma, double rho0, double rs, double rt, VecDoub ABC, bool normalize)
     :alpha(alpha),beta(beta),gamma(gamma),rho0(rho0),rs(rs),rt(rt),FiniteMassTriaxialDensityProfile(ABC,normalize){
       if((gamma>=3. or beta<=3.) and rt<=0.)
-        std::cerr<<"Infinite mass if gamma>3 or beta<3 and rt=0\n";
+        throw std::invalid_argument("Infinite mass if gamma>3 or beta<3 and rt=0\n");
     }
 
 void AlphaBetaGammaDensityProfile::print(void){

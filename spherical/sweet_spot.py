@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sys
 sys.path.append('/home/jls/work/data/jfactors/')
-from spherical_Jfactors import wyns_formulaJ_NFW, wyns_formulaD_NFW
+from spherical_Jfactors import wyns_formulaJ_NFW_data, wyns_formulaD_NFW_data
 from matplotlib.ticker import MaxNLocator # added
 from spherical_Jfactors import *
 
@@ -16,7 +16,7 @@ angs = np.deg2rad(np.logspace(np.log10(5e-3),np.log10(0.6),30))
 Rhalf = 0.03 ## 30pc
 sig = 3.     ## 3km/s
 G = 4.300918e-6 ## in units solar mass, km/s kpc
-Mhalf = 4.*sig**2*Rhalf/G
+Mhalf = 2.5*sig**2*Rhalf/G ## Walker formula
 rs = 0.15 ## scale radius of NFW units kpc
 D = 30.   ## distance kpc
 gamma = [0.,0.2,0.4,0.6,0.8,1.,1.2]
@@ -60,8 +60,8 @@ for b,c in zip(beta,sns.color_palette()):
 a[0].fill_between(angs_dimless,min_M,max_M,alpha=0.5,color=sns.color_palette()[0])
 a[1].fill_between(angs_dimless,min_J,max_J,alpha=0.5,color=sns.color_palette()[0])
 a[2].fill_between(angs_dimless,min_D,max_D,alpha=0.5,color=sns.color_palette()[0])
-a[1].plot(angs_dimless,wyns_formulaJ_NFW(sig,Rhalf*1000.,D,np.rad2deg(angs),rs),color='k')
-a[2].plot(angs_dimless,wyns_formulaD_NFW(sig,Rhalf*1000.,D,np.rad2deg(angs),rs),color='k')
+a[1].plot(angs_dimless,wyns_formulaJ_NFW_data(sig,Rhalf*1000.,D,np.rad2deg(angs),rs,walker_or_wolf="walker"),color='k')
+a[2].plot(angs_dimless,wyns_formulaD_NFW_data(sig,Rhalf*1000.,D,np.rad2deg(angs),rs,walker_or_wolf="walker"),color='k')
 a[0].semilogx()
 a[1].semilogx()
 a[2].semilogx()
@@ -82,7 +82,7 @@ l=a[1].axvline(2.,ls='dashed',color='k')
 l.set_dashes((3,1))
 l=a[1].axvline(1.,ls='dashed',color='k')
 l.set_dashes((3,1))
-a[1].annotate('Walker et al. (2011)', xy=(2.1,18.5),rotation=90.,annotation_clip=False)
+a[1].annotate('Walker et al. (2011)', xy=(2.1,18.1),rotation=90.,annotation_clip=False)
 l=a[2].axvline(2.,ls='dashed',color='k')
 l.set_dashes((3,1))
 l=a[2].axvline(1.,ls='dashed',color='k')
@@ -94,6 +94,6 @@ l.set_dashes((3,1))
 a[2].annotate(r'$\theta=0.5^\circ$', xy=(7.,17.),rotation=90.,annotation_clip=False)
 a[2].set_ylim(15.5,19.)
 a[0].set_ylabel(r'$M(D\theta)/\mathrm{M}_\odot$')
-a[1].set_ylabel(r'$\log_{10} [J(\theta)/\mathrm{GeV\,cm}^{-5}]$')
-a[2].set_ylabel(r'$\log_{10} [D(\theta)/\mathrm{GeV\,cm}^{-2}]$')
+a[1].set_ylabel(r'$\log_{10} [\mathrm{J}(\theta)/\mathrm{GeV\,cm}^{-5}]$')
+a[2].set_ylabel(r'$\log_{10} [\mathrm{D}(\theta)/\mathrm{GeV\,cm}^{-2}]$')
 plt.savefig('spherical_comparison.pdf',bbox_inches='tight')

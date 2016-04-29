@@ -7,9 +7,16 @@
 #include "Multipole.h"
 #include "two_component_model.h"
 
+void translate(std::exception const& e)
+{
+    // Use the Python 'C' API to set up an exception object
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+}
 BOOST_PYTHON_MODULE_INIT(jfactors_py) {
   boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
   docstring_options doc_options(true);
+  register_exception_translator<std::invalid_argument>(&translate);
+  register_exception_translator<std::runtime_error>(&translate);
   class_<DoubleProfileModel, boost::noncopyable>("DoubleProfileModel",
           "Model for Sanders, Evans & Geringer-Sameth (2016)\n"
           "\n"
@@ -38,6 +45,35 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "\n"
           "Returns:\n"
           "    vector of J-factor (and D-factor if required)\n"
+      "")
+    .def("Mass", &DoubleProfileModel::MassProfile,
+         "Compute mass\n"
+          "\n"
+          "Args:\n"
+          "    param1: theta, viewing angle.\n"
+          "    param2: phi, viewing angle.\n"
+          "    param3: distance.\n"
+          "    param4: ang, vector of angles in degrees.\n"
+          "    param5: print errors.\n"
+          "    param6: return inside cylinder ('cylinder'), spheroid ('spheroid') or sphere ('sphere').\n"
+          "\n"
+          "Returns:\n"
+          "    mass\n"
+      "")
+    .def("r_h", &DoubleProfileModel::spherical_rh,
+         "Compute spherical half-light radius of stars\n"
+          "\n"
+          "Returns:\n"
+          "    r_h\n"
+      "")
+    .def("R_h", &DoubleProfileModel::projected_rh,
+         "Compute projected half-light radius of stars\n"
+          "\n"
+          "Args:\n"
+          "    param1: theta, viewing angle.\n"
+          "    param2: phi, viewing angle.\n"
+          "Returns:\n"
+          "    R_h\n"
       "")
     .def("ellipticity", &DoubleProfileModel::observed_ellipticity,
          "Compute ellipticity\n"

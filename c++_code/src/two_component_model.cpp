@@ -167,6 +167,43 @@ VecDoub DoubleProfileModel::J_factor(double theta, double phi, double D, double 
   else return {Jfactor};
 }
 
+VecDoub DoubleProfileModel::MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby, std::string typ){
+
+  ObservedTriaxialDensityProfile ObsStars(Stars,theta,phi);
+
+  VecDoub ar = DM->axis_ratios();
+  NFW NFWP(1.,DM->scale_radius(),qpot_from_q(ar[0]),qpot_from_q(ar[1]));
+  MultipoleDensity MP(DM);
+  MultipoleExpansion_Triaxial MEA(&MP,150,16,12,8,DM->scale_radius(),0.001*DM->scale_radius(),DM->tidal_radius()>0.?10.*DM->tidal_radius():100.*DM->scale_radius());
+
+  double Stars_Reff = ObsStars.half_light_radius();
+  double VelocityDispersion = (use_multipole?ObsStars.sigma_los(&MEA):ObsStars.sigma_los(&NFWP));
+
+  // Now scale
+  double RadiusRatio = rh/Stars_Reff;
+  double MassRatio = pow(slos/VelocityDispersion,2.)*RadiusRatio;
+
+  double rho0_dm = DM->central_density()/pow(RadiusRatio,3.)*MassRatio;
+  double rs_dm = DM->scale_radius()*RadiusRatio;
+  double rt_dm = DM->tidal_radius()*RadiusRatio;
+  VecDoub abg_dm = DM->alpha_beta_gamma();
+  VecDoub abc_dm = DM->axes();
+
+  AlphaBetaGammaDensityProfile DMSc(abg_dm,rho0_dm,rs_dm,rt_dm,abc_dm,false);
+  ObservedTriaxialDensityProfile ObsDMSc(&DMSc,theta,phi);
+
+  VecDoub masses(ang.size(),0.);
+  if(typ=="cylinder")
+    for(unsigned i=0;i<ang.size();++i)
+      masses[i]=ObsDMSc.M_ellipse(D*ang[i]/180.*PI);
+  else if(typ=="sphere")
+    for(unsigned i=0;i<ang.size();++i)
+      masses[i]=DMSc.M_sphere(D,ang[i]);
+  else if(typ=="ellipsoid")
+    for(unsigned i=0;i<ang.size();++i)
+      masses[i]=DMSc.mass_ellipsoid(D*ang[i]/180.*PI);
+  return masses;
+}
 
 double DoubleProfileModel::correction_factor(double theta, double phi, double D, double ang, bool gobby, bool geo_average){
   // Note that this function permanently changes the stars and dark matter
@@ -243,4 +280,11 @@ double DoubleProfileModel::sigma_tot(void){
   MultipoleDensity MP(DM);
   MultipoleExpansion_Triaxial MEA(&MP,150,16,12,8,DM->scale_radius(),0.001*DM->scale_radius(),10.*DM->tidal_radius());
   return Stars->sigma_tot(&MEA);
+}
+double DoubleProfileModel::spherical_rh(void){
+  return Stars->spherical_half_light_radius();
+}
+double DoubleProfileModel::projected_rh(double theta, double phi){
+  ObservedTriaxialDensityProfile ObsStars(Stars,theta,phi);
+  return ObsStars.half_light_radius();
 }

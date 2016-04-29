@@ -99,7 +99,7 @@ def wyns_formulaJ_NFW(rho0,r_s,distance,angle):
 	J *= np.pi*rho0**2*r_s**2/(3.*distance**2*Delta2**2)
 	return np.log10(J/GEV2cm5toMsol2kpc5)
 
-def wyns_formulaJ_NFW_data(sigma_los,r_half,distance,angle,r_s):
+def wyns_formulaJ_NFW_data(sigma_los,r_half,distance,angle,r_s,walker_or_wolf="wolf"):
 	'''
 	J factor from M_half for NFW profile
 	sigma_los in km/s, r_half in pc, distance in kpc, angle in deg, r_s in kpc
@@ -107,9 +107,16 @@ def wyns_formulaJ_NFW_data(sigma_los,r_half,distance,angle,r_s):
 	r_half=0.001*r_half
 	angle=np.deg2rad(angle)
 	delta_Omega = 2.*np.pi*(1-np.cos(angle))
-	Mhalf = 4.*sigma_los**2*r_half/G
-	rho0 = Mhalf/4./np.pi/r_s**3/(np.log((r_s+r_half)/r_s)-r_half/(r_s+r_half))
-	return wyns_formulaJ_NFW(rho0,r_s,distance,angle)
+
+	if(walker_or_wolf=="wolf"):
+		Mhalf = 4.*sigma_los**2*r_half/G
+		r_half=4./3.*r_half
+		rho0 = Mhalf/4./np.pi/r_s**3/(np.log((r_s+r_half)/r_s)-r_half/(r_s+r_half))
+		return wyns_formulaJ_NFW(rho0,r_s,distance,angle)
+	else:
+		Mhalf = 2.5*sigma_los**2*r_half/G
+		rho0 = Mhalf/4./np.pi/r_s**3/(np.log((r_s+r_half)/r_s)-r_half/(r_s+r_half))
+		return wyns_formulaJ_NFW(rho0,r_s,distance,angle)
 
 def wyns_formulaD_NFW(rho0,r_s,distance,angle):
 	''' Analytic integration of J factor for NFW '''
@@ -118,7 +125,7 @@ def wyns_formulaD_NFW(rho0,r_s,distance,angle):
 	D *= 4.*np.pi*rho0*r_s**3/distance**2
 	return np.log10(D/GEVcm2toMsolkpc2)
 
-def wyns_formulaD_NFW_data(sigma_los,r_half,distance,angle,r_s):
+def wyns_formulaD_NFW_data(sigma_los,r_half,distance,angle,r_s,walker_or_wolf="wolf"):
 	'''
 	D factor from M_half for NFW profile
 	sigma_los in km/s, r_half in pc, distance in kpc, angle in deg, r_s in kpc
@@ -126,11 +133,18 @@ def wyns_formulaD_NFW_data(sigma_los,r_half,distance,angle,r_s):
 	r_half=0.001*r_half
 	angle=np.deg2rad(angle)
 	delta_Omega = 2.*np.pi*(1-np.cos(angle))
-	Mhalf = 4.*sigma_los**2*r_half/G
-	rho0 = Mhalf/4./np.pi/r_s**3/(np.log((r_s+r_half)/r_s)-r_half/(r_s+r_half))
-	return wyns_formulaD_NFW(rho0,r_s,distance,angle)
+	if(walker_or_wolf=="wolf"):
+		Mhalf = 4.*sigma_los**2*r_half/G
+		r_half=4./3.*r_half
+		rho0 = Mhalf/4./np.pi/r_s**3/(np.log((r_s+r_half)/r_s)-r_half/(r_s+r_half))
+		return wyns_formulaD_NFW(rho0,r_s,distance,angle)
+	else:
+		Mhalf = 2.5*sigma_los**2*r_half/G
+		rho0 = Mhalf/4./np.pi/r_s**3/(np.log((r_s+r_half)/r_s)-r_half/(r_s+r_half))
 
-def wyns_formulaJ(sigma_los,r_half,distance,angle,gamma=1.):
+		return wyns_formulaD_NFW(rho0,r_s,distance,angle)
+
+def wyns_formulaJ(sigma_los,r_half,distance,angle,gamma=1.,walker_or_wolf="wolf"):
 	'''
 	J factor from M_half for power-law profile (slope = gamma)
 	sigma_los in km/s, r_half in pc, distance in kpc, angle in deg, r_s in kpc
@@ -138,14 +152,20 @@ def wyns_formulaJ(sigma_los,r_half,distance,angle,gamma=1.):
 	r_half=0.001*r_half
 	angle=np.deg2rad(angle)
 	delta_Omega = 2.*np.pi*(1-np.cos(angle))
+
+	fac = (2.5/4.)**2
+
+	if(walker_or_wolf=="wolf"):
+		fac=(0.25*(27./16.)*(4./3.)**gamma)**2
+
 	if(gamma!=1. and gamma>.5 and gamma<1.5):
 		factor = 2.*(3.-gamma)**2*Gamma(gamma-0.5)/(np.pi**(2-gamma)*(3.-2*gamma)*Gamma(gamma))
-		return np.log10(factor*sigma_los**4*delta_Omega**(1.5-gamma)/G**2*distance**(1-2.*gamma)*r_half**(2*gamma-4.)/GEV2cm5toMsol2kpc5)
+		return np.log10(factor*sigma_los**4*delta_Omega**(1.5-gamma)/G**2*distance**(1-2.*gamma)*r_half**(2*gamma-4.)/GEV2cm5toMsol2kpc5)+np.log10(fac)
 	else:
-		return np.log10(8./np.sqrt(np.pi)*sigma_los**4*np.sqrt(delta_Omega)/G**2/distance/(r_half**2)/GEV2cm5toMsol2kpc5)
+		return np.log10(8./np.sqrt(np.pi)*sigma_los**4*np.sqrt(delta_Omega)/G**2/distance/(r_half**2)/GEV2cm5toMsol2kpc5)+np.log10(fac)
 
 
-def wyns_formulaD(sigma_los,r_half,distance,angle,gamma=1.):
+def wyns_formulaD(sigma_los,r_half,distance,angle,gamma=1.,walker_or_wolf="wolf"):
 	'''
 	D factor from M_half for power-law profile (slope = gamma)
 	sigma_los in km/s, r_half in pc, distance in kpc, angle in deg, r_s in kpc
@@ -153,11 +173,17 @@ def wyns_formulaD(sigma_los,r_half,distance,angle,gamma=1.):
 	r_half=0.001*r_half
 	angle=np.deg2rad(angle)
 	delta_Omega = 2.*np.pi*(1-np.cos(angle))
+
+	fac = (2.5/4.)
+
+	if(walker_or_wolf=="wolf"):
+		fac=(0.25*(27./16.)*(4./3.)**gamma)
+
 	if(gamma>1. and gamma<3.):
 		factor = 2.*Gamma(gamma*0.5-0.5)/(np.pi**(1-0.5*gamma)*Gamma(gamma*0.5))
-		return np.log10(factor*sigma_los**2*delta_Omega**(1.5-gamma*0.5)/G*distance**(1.-gamma)*r_half**(gamma-2.)/GEVcm2toMsolkpc2)
+		return np.log10(factor*sigma_los**2*delta_Omega**(1.5-gamma*0.5)/G*distance**(1.-gamma)*r_half**(gamma-2.)/GEVcm2toMsolkpc2)+np.log10(fac)
 
-def sample_errorsJ(sigma_los,esigma_los,r_half,er_half,distance,edistance,angle,eangle,gamma=1.,N=1000,nfw=-1.):
+def sample_errorsJ(sigma_los,esigma_los,r_half,er_half,distance,edistance,angle,eangle,gamma=1.,N=1000,nfw=-1.,walker_or_wolf="wolf"):
 	''' Samples from sigma_los (km/s), r_half (pc), distance (kpc) and angle (deg) pdfs (gaussians) and returns median J value and pm 1 sigma '''
 	if(esigma_los[0]==0.):
 		## In this case sigma_los is the 95% upper limit. We sample from a uniform distribution from 0.1 km/s to sigma_los/0.95
@@ -170,13 +196,13 @@ def sample_errorsJ(sigma_los,esigma_los,r_half,er_half,distance,edistance,angle,
 	a=np.exp(asymmetric_gaussian_samples(np.log(angle),eangle/angle,N))
 	d=np.random.normal(loc=distance,scale=edistance,size=N)
 	if(nfw>0.):
-		wf = wyns_formulaJ_NFW_data(s,r,d,a,nfw)
+		wf = wyns_formulaJ_NFW_data(s,r,d,a,nfw,walker_or_wolf)
 	else:
-		wf = wyns_formulaJ(s,r,d,a,gamma)
+		wf = wyns_formulaJ(s,r,d,a,gamma,walker_or_wolf)
 	mean=np.nanmedian(wf)
 	return np.array([mean,mean-np.nanpercentile(wf,15.87),np.nanpercentile(wf,84.13)-mean])
 
-def wyns_formulaJ_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.],N=1000,geo_factor=True):
+def wyns_formulaJ_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.],N=1000,geo_factor=True,walker_or_wolf="wolf"):
 	''' Performs J sampling for a set of data '''
 	if(len(nfw)<len(data)):
 		nfw=-1.*np.ones(len(data))
@@ -204,7 +230,8 @@ def wyns_formulaJ_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.
 		                           angerrs[i],
 		                           gammaarray[i],
 		                           N=N,
-		                           nfw=nfw[i]) for i in range(len(data))])
+		                           nfw=nfw[i],
+		                           walker_or_wolf=walker_or_wolf) for i in range(len(data))])
 	return np.array([sample_errorsJ(data.sigma_los[i],
 	                				[data.esigma_los2[i],data.esigma_los1[i]],
 	                				data.R_half[i]*geof[i],
@@ -216,9 +243,10 @@ def wyns_formulaJ_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.
 	                				angerrs[i],
 	                				gamma,
 	                				N=N,
-	                				nfw=nfw[i]) for i in range(len(data))])
+	                				nfw=nfw[i],
+	                				walker_or_wolf=walker_or_wolf) for i in range(len(data))])
 
-def sample_errorsD(sigma_los,esigma_los,r_half,er_half,distance,edistance,angle,eangle,gamma=1.,N=1000,nfw=-1.):
+def sample_errorsD(sigma_los,esigma_los,r_half,er_half,distance,edistance,angle,eangle,gamma=1.,N=1000,nfw=-1.,walker_or_wolf="wolf"):
 	''' Samples from sigma_los (km/s), r_half (pc), distance (kpc) and angle (deg) pdfs (gaussians) and returns median D value and pm 1 sigma '''
 	if(esigma_los[0]==0.):
 		## In this case sigma_los is the 95% upper limit. We sample from a uniform distribution from 0.1 km/s to sigma_los/0.95
@@ -231,13 +259,13 @@ def sample_errorsD(sigma_los,esigma_los,r_half,er_half,distance,edistance,angle,
 	a=np.exp(asymmetric_gaussian_samples(np.log(angle),eangle/angle,N))
 	d=np.random.normal(loc=distance,scale=edistance,size=N)
 	if(nfw>0.):
-		wf = wyns_formulaD_NFW_data(s,r,d,a,nfw)
+		wf = wyns_formulaD_NFW_data(s,r,d,a,nfw,walker_or_wolf)
 	else:
-		wf = wyns_formulaD(s,r,d,a,gamma)
+		wf = wyns_formulaD(s,r,d,a,gamma,walker_or_wolf)
 	mean=np.nanmedian(wf)
 	return np.array([mean,mean-np.nanpercentile(wf,15.87),np.nanpercentile(wf,84.13)-mean])
 
-def wyns_formulaD_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.],N=1000,geo_factor=True):
+def wyns_formulaD_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.],N=1000,geo_factor=True,walker_or_wolf="wolf"):
 	''' Performs D sampling for a set of data '''
 	if(len(nfw)<len(data)):
 		nfw=-1.*np.ones(len(data))
@@ -265,7 +293,8 @@ def wyns_formulaD_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.
 		                        angerrs[i],
 		                        gammaarray[i],
 		                        N=N,
-		                        nfw=nfw[i]) for i in range(len(data))])
+		                        nfw=nfw[i],
+		                        walker_or_wolf=walker_or_wolf) for i in range(len(data))])
 	return np.array([sample_errorsD(data.sigma_los[i],
 	                				[data.esigma_los2[i],data.esigma_los1[i]],
 	                				data.R_half[i]*geof[i],
@@ -277,7 +306,8 @@ def wyns_formulaD_error_sample(data,gamma=1.,gammaarray=None,angle='Max',nfw=[0.
 	                				angerrs[i],
 	                				gamma,
 	                				N=N,
-	                				nfw=nfw[i]) for i in range(len(data))])
+	                				nfw=nfw[i],
+	                				walker_or_wolf=walker_or_wolf) for i in range(len(data))])
 # def add_thetas(ax,xrang,thetalist):
 # 	ylim=ax.get_ylim()
 # 	ax.set_ylim(ylim[0]-0.5,ylim[1])

@@ -69,9 +69,10 @@ def make_plot(data,cols=[11,12,13],label='Face-on',
 			l2.set_dashes((2,1))
 	## 2. Also plot the spherical formulae from Paper I
 	l,=a[0].plot(tmax,sJ.wyns_formulaJ_NFW_data(Velocity_dispersion,rh*1000.*gf
-	             ,Distance,tmax,2.*rh*gf),ls='dashed',color='k')
+	             ,Distance,tmax,2.*rh*gf,walker_or_wolf="walker"),
+				ls='dashed',color='k')
 	l.set_dashes((4,1))
-	l,=a[1].plot(tmax,sJ.wyns_formulaD_NFW_data(Velocity_dispersion,rh*1000.*gf,Distance,tmax,2.*rh*gf),ls='dashed',color='k')
+	l,=a[1].plot(tmax,sJ.wyns_formulaD_NFW_data(Velocity_dispersion,rh*1000.*gf,Distance,tmax,2.*rh*gf,walker_or_wolf="walker"),ls='dashed',color='k')
 	l.set_dashes((4,1))
 	## 3. Add the colorbar
 	divider = make_axes_locatable(a[0])
@@ -81,9 +82,9 @@ def make_plot(data,cols=[11,12,13],label='Face-on',
 	cbl.ax.xaxis.set_ticks_position('top')
 	a[0].yaxis.get_major_ticks()[0].label1.set_visible(False)
 	a[0].set_xticklabels([])
-	a[0].set_ylabel(r'$\log_{10}(J(\theta)/\,\mathrm{GeV^2\,cm}^{-5})$')
+	a[0].set_ylabel(r'$\log_{10}(\mathrm{J}(\theta)/\,\mathrm{GeV^2\,cm}^{-5})$')
 	a[1].set_xlabel(r'$\theta/\,\mathrm{deg}$')
-	a[1].set_ylabel(r'$\log_{10}(D(\theta)/\,\mathrm{GeV\,cm}^{-2})$')
+	a[1].set_ylabel(r'$\log_{10}(\mathrm{D}(\theta)/\,\mathrm{GeV\,cm}^{-2})$')
 	a[0].text(0.9,0.1,label,horizontalalignment='right',verticalalignment='bottom',transform=a[0].transAxes,fontsize=14)
 	plt.savefig(output_file,bbox_inches='tight')
 

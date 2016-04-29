@@ -171,7 +171,7 @@ def both_round_pl(qrange,name='both_round.pdf',gamma_star = 2.,Dfactor=False):
 
 	vn = np.vectorize(binney_tremaine_virial_ratio)
 	plt.plot(qrange,np.log10((1./3.+2./3.*vn(qrange))**2),color='g')
-	
+
 	## Fit curves with polynomial
 	p, pcov = curve_fit(func_qm, datt.T[0][datt.T[0]<1.],datt.T[2+2*Dfactor][datt.T[0]<1.])
 	p2, pcov = curve_fit(func_qp, datt.T[0][datt.T[0]>1.],datt.T[2+2*Dfactor][datt.T[0]>1.])
