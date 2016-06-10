@@ -53,7 +53,7 @@ double NFWDensityProfile::D_factor(double D, double ang){
 //=============================================================================
 // Evans flattened cored model
 //=============================================================================
-CoredDMProfile::CoredDMProfile(double rs, double q, double v0):FiniteMassTriaxialDensityProfile({1.,1.,q},false),r_dm(rs),v0(v0){
+CoredDMProfile::CoredDMProfile(double rs, double q, double v0):FiniteMassTriaxialDensityProfile({1.,1.,q},false),r_dm(rs),v0(v0),q(q){
 	q_phi_dm = .5*sqrt(1.+sqrt(1.+8.*q*q));
 }
 double CoredDMProfile::phi_dm(double R, double z){
@@ -269,12 +269,19 @@ void CoredModel::scale(double rh, double slos, std::string dir){
 	if(staaars.axis_ratios()[1]>1. and dir=="edge"){Rh=Rh*staaars.axis_ratios()[1];}
 	double RadiusRatio = rh/Rh;
 	double VelRatio = slos/VD;
-        staaars = AlphaBetaGammaDensityProfile(staaars.alpha_beta_gamma(),
-						staaars.central_density(),
-						staaars.scale_radius()*RadiusRatio,
-						-1,
-						staaars.axes(),false);
+	double MassRatio = pow(VelRatio,2.)*RadiusRatio;
+    staaars = AlphaBetaGammaDensityProfile(staaars.alpha_beta_gamma(),
+					staaars.central_density()/pow(RadiusRatio,3.)*MassRatio,
+					staaars.scale_radius()*RadiusRatio,
+					-1,
+					staaars.axes(),false);
 	dm = CoredDMProfile(RadiusRatio*dm.scale_radius(),
-			    staaars.axes()[1],
+			    dm.dm_density_flattening(),
 			    VelRatio*dm.amplitude());
+}
+double CoredModel::Mass(double theta, double phi, double r, std::string typ){
+  if(typ=="sphere")
+	return dm.M_sphere(1.,r*180./PI);
+  else if(typ=="ellipsoid")
+  	return dm.mass_ellipsoid(r);
 }

@@ -5,6 +5,7 @@
 #include "observed_density.h"
 #include "potential.h"
 #include "Multipole.h"
+#include "analytic_results.h"
 #include "two_component_model.h"
 
 void translate(std::exception const& e)
@@ -122,7 +123,39 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "Returns:\n"
           "    D factor\n"
       "");
-
+  class_<CoredModel, boost::noncopyable>("CoredModel",
+          "Evans isothermal cored model (1993)\n"
+          "\n"
+          "Args:\n"
+          "    param1: n_star.\n"
+          "    param2: radii (r_s, r_dm).\n"
+          "    param3: flattening (q_s,q_dm).\n"
+          "    param4: norms (rho0,v0).\n"
+          ,init<double,VecDoub,VecDoub,VecDoub>())
+  .def("scale",&CoredModel::scale,
+       "Scale model to half-light radius and velocity dispersion"
+       "\n"
+       "Args:\n"
+       "    param1: rh, half-light radius\n"
+       "    param2: slos, velocity dispersion\n"
+       "    param3: dir, viewing direction -- face-on (round) or edge-on(edge)\n")
+  .def("mass_dm",&CoredModel::mass_dm,
+       "Mass within sphere of radius r"
+       "\n"
+       "Args:\n"
+       "    param1: r, spherical radius\n")
+  .def("mass",&CoredModel::Mass,
+       "Compute mass\n"
+          "\n"
+          "Args:\n"
+          "    param1: theta, viewing angle.\n"
+          "    param2: phi, viewing angle.\n"
+          "    param3: r, radius.\n"
+          "    param4: return inside ellipsoid ('ellipsoid') or sphere ('sphere').\n"
+          "\n"
+          "Returns:\n"
+          "    mass\n"
+      "");
   to_python_converter<VecDoub, vector_to_ndarray<double>>();
   vector_from_ndarray<double>();
   import_array();

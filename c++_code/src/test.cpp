@@ -38,6 +38,7 @@ TEST(Profile,TriaxialUnNorm){
 	double rho0 = 2.3, rs = 0.053, rt = 1000.;
 	AlphaBetaGammaDensityProfile ABG({2.,5.,0.},rho0,rs,rt,abc,false);
 	EXPECT_NEAR((4*PI)/3.*abc[0]*abc[1]*abc[2]*rho0*rs*rs*rs,ABG.mass(),test_err);
+	std::cout<<ABG.mass_ellipsoid(rs)<<" "<<ABG.M_sphere(1.,rs*180./PI)<<std::endl;
 	EXPECT_NEAR((4*PI)/3.*abc[0]*abc[1]*abc[2]*rho0*rs*rs*rs,ABG.mass_ellipsoid(100.),test_err);
 	EXPECT_NEAR(rs/sqrt(pow(2.,2./3.)-1.),ABG.spherical_half_light_radius(),1e-4);
 	EXPECT_NEAR((4*PI)/3.*abc[0]*abc[1]*abc[2]*rho0*rs*rs*rs/2.,ABG.mass_ellipsoid(rs/sqrt(pow(2.,2./3.)-1.)),test_err);
@@ -301,7 +302,7 @@ double sigma_z_wyn6_RcRd(double q, double qdm){
 TEST(AnalyticProfile,CoredModel5){
 
 	double D = 3000., ang = 0.5, nstar=5.;
-	double q = 0.2;
+	double q = 0.3;
 	CoredModel Csph(nstar,{1.,1.},{1.,1.},{1.,1.});
 	EXPECT_NEAR(Csph.sigma_los(0.,0.),1./sqrt(nstar),1e-4);
 
@@ -319,6 +320,7 @@ TEST(AnalyticProfile,CoredModel5){
 	EXPECT_NEAR(C2.sigma_los(.5*PI,0.),sigma_R_wyn5(1.,2.,q,q)/sqrt(2.),1e-4);
 	EXPECT_NEAR(C2.sigma_los(.5*PI,0.),C2.sigma_los_m(.5*PI,0.),1e-3);
 	C2.scale(0.05,3.);
+	EXPECT_NEAR(C2.dm_density_flattening(),q,0.0001);
 	EXPECT_NEAR(C2.J_factor_arbitrary(D,ang,0.,0.),C2.J_factor_face(D,ang),1e+6);
 	EXPECT_NEAR(C2.J_factor_arbitrary(D,ang,PI/2.,0.),C2.J_factor_edge(D,ang),1e+7);
 

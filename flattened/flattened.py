@@ -169,9 +169,6 @@ def both_round_pl(qrange,name='both_round.pdf',gamma_star = 2.,Dfactor=False):
 	datt = np.genfromtxt('ret_results.dat')
 	plt.plot(datt.T[0],datt.T[2+2*Dfactor],'.',color='k',ms=5,zorder=10)
 
-	vn = np.vectorize(binney_tremaine_virial_ratio)
-	plt.plot(qrange,np.log10((1./3.+2./3.*vn(qrange))**2),color='g')
-
 	## Fit curves with polynomial
 	p, pcov = curve_fit(func_qm, datt.T[0][datt.T[0]<1.],datt.T[2+2*Dfactor][datt.T[0]<1.])
 	p2, pcov = curve_fit(func_qp, datt.T[0][datt.T[0]>1.],datt.T[2+2*Dfactor][datt.T[0]>1.])
@@ -202,7 +199,7 @@ def both_round_pl(qrange,name='both_round.pdf',gamma_star = 2.,Dfactor=False):
 	loc = (2.,-0.77)
 	rot = -24
 	if(Dfactor):
-		loc = (2.5,-0.26)
+		loc = (2.5,-0.24)
 		rot = -10
 	plt.annotate(r'$\gamma_\star=%i$'%(gamma_star+1),xy=loc,rotation=rot,color=sns.color_palette()[0])
 	l,=plt.plot(qrange,np.log10(fn(qrange,qrange,gamma_star,1.)),label=r'Cusp, $\gamma_\star=%i$'%gamma_star,color=sns.color_palette()[0])
@@ -217,14 +214,14 @@ def both_round_pl(qrange,name='both_round.pdf',gamma_star = 2.,Dfactor=False):
 	loc = (2.0,-0.49)
 	rot = -16
 	if(Dfactor):
-		loc = (3.2,-0.34)
-		rot = -10
+		loc = (3.2,-0.12)
+		rot = -5
 	plt.annotate(r'$R_d/R_c=2$',xy=loc,rotation=rot,color=sns.color_palette()[2])
 	loc = (1.,-0.23)
 	rot = -44
 	if(Dfactor):
-		loc = (1.,-0.15)
-		rot = -44
+		loc = (1.2,-0.15)
+		rot = -35
 	plt.annotate(r'$R_d/R_c=200$',xy=loc,rotation=rot,color=sns.color_palette()[2])
 
 	l=plt.axvline(1.,color='k',ls='dashed')
@@ -293,9 +290,6 @@ def both_edge_pl(qrange,name='both_edge.pdf',gamma_star = 2.,Dfactor=False,geo_f
 	l,=plt.plot(datt2.T[0],np.log10(datt2.T[3+Dfactor]),label='Virial Method',color=sns.color_palette()[1])
 	l.set_dashes((2,1))
 
-	vn = np.vectorize(binney_tremaine_virial_ratio)
-	plt.plot(qrange,np.log10((2./3.+1./3./vn(qrange))**2),color='g')
-
 	gamma_DM = 1.
 
 	## Plot axisymmetric cusp model
@@ -326,16 +320,16 @@ def both_edge_pl(qrange,name='both_edge.pdf',gamma_star = 2.,Dfactor=False,geo_f
 	plt.fill_between(wyn[0].T[0],np.log10(wyn[0].T[index]),np.log10(wyn[2].T[index]),edgecolor="None",alpha=0.3,color=sns.color_palette()[2])
 
 	loc = (0.33,-0.16)
-	rot = 36
+	rot = 25
 	if(Dfactor):
-		loc = (3.,-0.02)
+		loc = (3.,-0.07)
 		rot = 2
 	plt.annotate(r'$R_d/R_c=2$',xy=loc,rotation=rot,color=sns.color_palette()[2])
 	loc = (3.,0.21)
 	rot = 6
 	if(Dfactor):
-		loc = (3.1,0.34)
-		rot = 6
+		loc = (3.1,0.14)
+		rot = 2
 	plt.annotate(r'$R_d/R_c=200$',xy=loc,rotation=rot,color=sns.color_palette()[2])
 
 	## Divide between prolate and oblate

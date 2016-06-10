@@ -223,23 +223,24 @@ void wyn_models_cfactor_loop(std::string filename, bool geo_average=false,double
 }
 
 int main(){
+  wyn_models_cfactor_loop("data/wyn_factor_n4_rr2",true,0.5,4.);
+  wyn_models_cfactor_loop("data/wyn_factor_n4_rr20",true,0.05,4.);
+  wyn_models_cfactor_loop("data/wyn_factor_n4_rr200",true,0.005,4.);
+
+  wyn_models_cfactor_loop("data/wyn_factor_n6_rr2",true,0.5,6.);
+  wyn_models_cfactor_loop("data/wyn_factor_n6_rr20",true,0.05,6.);
+  wyn_models_cfactor_loop("data/wyn_factor_n6_rr200",true,0.005,6.);
+
+  wyn_models_cfactor_loop("data/wyn_factor_n5_rr2",true,0.5,5.);
+  wyn_models_cfactor_loop("data/wyn_factor_n5_rr20",true,0.05,5.);
+  wyn_models_cfactor_loop("data/wyn_factor_n5_rr200",true,0.005,5.);
+  // cfactor_loop("fig7_gf",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,3.,1.});
+  return 0;
   rvratio_loop("data/test",true); return 0;
   cfactor_loop("fig7_gf_betadm6",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,6.,1.});
   // cfactor_loop("fig7_gf_cored",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,3.,0.});
   return 0;
-  wyn_models_cfactor_loop("data/wyn_factor_n4_rr2",true,0.5,4.);
-  wyn_models_cfactor_loop("data/wyn_factor_n4_rr20",true,0.05,4.);
-  wyn_models_cfactor_loop("data/wyn_factor_n4_rr200",true,0.005,4.); return 0;
-
-  wyn_models_cfactor_loop("data/wyn_factor_n6_rr2",true,0.5,6.);
-  wyn_models_cfactor_loop("data/wyn_factor_n6_rr20",true,0.05,6.);
-  wyn_models_cfactor_loop("data/wyn_factor_n6_rr200",true,0.005,6.); return 0;
   cfactor_loop("fig7_gf_beta7",false,true,true,.5,10.,9.,{2.,7.,0.},{1.,3.,1.});return 0;
-  wyn_models_cfactor_loop("data/wyn_factor_n5_rr2",true,0.5,5.);
-  wyn_models_cfactor_loop("data/wyn_factor_n5_rr20",true,0.05,5.);
-  wyn_models_cfactor_loop("data/wyn_factor_n5_rr200",true,0.005,5.);
-  cfactor_loop("fig7_gf",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,3.,1.});
-  return 0;
 
   cfactor_loop("fig7_ffffff2",false,true,true,2.,10.,9.,{2.,5.,0.},{1.,3.,1.});return 0.;
   // cfactor_loop("fig7_beta4",false,true,true,0.5,10.,9.,{2.,4.,0.},{1.,3.,0.});return 0.;

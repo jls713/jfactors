@@ -44,6 +44,7 @@ public:
 class CoredDMProfile: public FiniteMassTriaxialDensityProfile, public Potential_JS{
 private:
 	double r_dm;   /** scale radius of dm       **/
+    double q;/** density flattening dm **/
     double q_phi_dm;/** potential flattening dm **/
 	double v0;     /** amplitude of dm potential**/
 public:
@@ -59,6 +60,7 @@ public:
 	CoredDMProfile(double rs, double q, double v0);
 	inline double amplitude(void){return v0;}
 	inline double scale_radius(void){return r_dm;}
+	inline double dm_density_flattening(void){return q;}
 	inline double dm_flattening(void){return q_phi_dm;}
 	/**
 	 * @brief DM potential
@@ -147,6 +149,7 @@ public:
 	 */
 	CoredModel(double n_star, VecDoub radii, VecDoub flattening, VecDoub norms);
 	inline double dm_flattening(void){return dm.dm_flattening();}
+	inline double dm_density_flattening(void){return dm.dm_density_flattening();}
 	inline double scale_radius(void){return staaars.scale_radius();}
 	inline double dm_scale_radius(void){return dm.scale_radius();}
 	inline double dm_norm(void){return dm.amplitude();}
@@ -249,6 +252,19 @@ public:
 	 *
 	 */
 	void scale(double rh, double slos, std::string dir = "round");
+    /**
+   * @brief compute mass
+   * @details compute mass in cylinder or sphere
+   *
+   * @param theta spherical polar latitude viewing angle
+   * @param phi spherical polar azimuthal viewing angle
+   * @param radius
+   * @param gobby print progress flag
+   * @param typ mass inside cylinder ('cylinder'), inside ellipsoid
+   * ('ellipsoid') or inside sphere ('sphere')
+   * @return mass
+   */
+   double Mass(double theta, double phi, double r, std::string typ="cylinder");
 };
 
 struct sig_cored_st{
