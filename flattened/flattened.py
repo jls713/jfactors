@@ -383,9 +383,9 @@ def both_WR_pl(qrange,name='both_WR.pdf'):
 	l,=plt.plot(datt2.T[0],np.log10(datt2.T[1]),label='Tensor virial')
 	l.set_dashes((2,1))
 
-	vfunc = np.vectorize(binney_tremaine_virial_ratio)
-	l,=plt.plot(qrange,np.log10(vfunc(qrange)),label='Spheroidal')
-	l.set_dashes((4,1))
+	# vfunc = np.vectorize(binney_tremaine_virial_ratio)
+	# l,=plt.plot(qrange,np.log10(vfunc(qrange)),label='Spheroidal')
+	# l.set_dashes((4,1))
 
 	datt = np.genfromtxt('ret_results.dat')
 	plt.plot(datt.T[0],np.log10(datt.T[7]),'.',color='k',ms=5,lw=1)
