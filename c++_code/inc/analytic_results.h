@@ -236,10 +236,11 @@ public:
 	 *
 	 * @param theta latitudinal viewing angle (spherical polar)
 	 * @param phi azimuthal viewing angle (spherical polar)
+	 * @param radius within which to compute dispersion
 	 *
 	 * @return l.o.s. velocity dispersion
 	 */
-	double sigma_los(double theta, double phi);
+	double sigma_los(double theta, double phi,double radius=-1.);
 	double sigma_los_m(double theta, double phi);
 	/**
 	 * @brief scale model
@@ -249,9 +250,9 @@ public:
 	 * @param rh half-light radius
 	 * @param slos l.o.s. velocity dispersion
 	 * @param dir viewing direction -- face-on (round) or edge-on (edge)
-	 *
+	 * @param vdrad -- radius within which to compute velocity dispersion
 	 */
-	void scale(double rh, double slos, std::string dir = "round");
+	void scale(double rh, double slos, std::string dir = "round",double vdrad=-1.);
     /**
    * @brief compute mass
    * @details compute mass in cylinder or sphere

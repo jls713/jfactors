@@ -204,13 +204,53 @@ int sig_los_integrand(const int ndim[],const double y[], const int*fdim, double 
     return 0;
 }
 
-double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot){
-  VecDoub x2min = {0.,0.,0.};
-  VecDoub x2max = {PI,2.*PI,.5*PI};
-  sig_st P(x2min,x2max,this,Pot,0);
-  double err;
-  double xx = integrate(&sig_los_integrand,&P,1e-3,0,INTEG,&err);
-  return sqrt(xx/DP->mass());
+int sig_los_ellipse_integrand(const int ndim[],const double y[], const int*fdim, double fval[], void *fdata){
+
+  double y2[3];
+  sig_st *P = (sig_st *) fdata;
+  for(int i=0;i<3;i++) y2[i]=(P->x2max[i]-P->x2min[i])*y[i]+P->x2min[i];
+
+  double rs = P->D->scale_radius();
+  y2[0]=rs*tan(y2[0]);
+
+  double xp = y2[2]*cos(y2[1]);
+  double yyp = y2[2]*sin(y2[1])*P->D->ellipticity();
+
+  // Rotate
+  VecDoub ra = P->D->rot_angles();
+  double ctm=ra[0],stm=ra[1];
+  double x = ctm*xp+stm*yyp;
+  double yy =-stm*xp+ctm*yyp;
+
+  // system coordinates
+  VecDoub X = P->D->x_proj({x,yy,y2[0]});
+  VecDoub dP = P->Pot->Forces(X);
+  VecDoub va = P->D->viewing_angles();
+  double st= sin(va[0]),ct= cos(va[0]);
+  double sp=sin(va[1]),cp=cos(va[1]);
+  double f = ct*ct*X[2]*(-dP[2])+st*st*cp*cp*X[0]*(-dP[0])+st*st*sp*sp*X[1]*(-dP[1]);
+  double jac = rs*(1.+y2[0]*y2[0]/rs/rs);
+  fval[0]=P->D->rho(X)*f*y2[2]*jac;
+  return 0;
+}
+
+double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot, double radius){
+  if(radius<0.){
+    VecDoub x2min = {0.,0.,0.};
+    VecDoub x2max = {PI,2.*PI,.5*PI};
+    sig_st P(x2min,x2max,this,Pot,0);
+    double err;
+    double xx = integrate(&sig_los_integrand,&P,1e-3,0,INTEG,&err);
+    return sqrt(xx/DP->mass());
+  }
+  else{
+    VecDoub x2min = {-.5*PI,0.,0.};
+    VecDoub x2max = {.5*PI,2.*PI,radius};
+    sig_st P(x2min,x2max,this,Pot,0);
+    double err;
+    double xx = ellipticity()*integrate(sig_los_ellipse_integrand,&P,1e-3,0,INTEG,&err);
+    return sqrt(xx/M_ellipse(radius));
+  }
 }
 
 double ObservedTriaxialDensityProfile::sigma_corr(Potential_JS *Pot){

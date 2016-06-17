@@ -148,9 +148,10 @@ public:
    * @details velocity dispersion along the line-of-sight
    *
    * @param Pot pointer to a Potential_JS instance
+   * @param radius within which to compute dispersion (if <0 over whole galaxy)
    * @return l.o.s. velocity dispersion
    */
-  double sigma_los(Potential_JS *Pot);
+  double sigma_los(Potential_JS *Pot, double radius=-1.);
   /**
    * @brief kinematic correction
    * @details ratio of sigma_los^2/sigma_tot^2

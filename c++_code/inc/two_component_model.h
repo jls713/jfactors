@@ -70,9 +70,10 @@ public:
    * @param gobby print progress flag
    * @param typ mass inside cylinder ('cylinder'), inside ellipsoid
    * ('ellipsoid') or inside sphere ('sphere')
+   * @param radius within which to compute velocity dispersion (if <0 over whole galaxy)
    * @return mass
    */
-  VecDoub MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby = true, std::string typ="cylinder");
+  VecDoub MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby = true, std::string typ="cylinder", double veldispradius=-1.);
     /**
    * @brief compute J-factor correction factor
    *

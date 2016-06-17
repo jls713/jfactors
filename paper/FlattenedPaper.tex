@@ -1,4 +1,5 @@
-\documentclass[prd,twocolumn,showpacs,preprintnumbers,superscriptaddress,nofootinbib,amsmath,amssymb,nobalancelastpage]{revtex4}
+\RequirePackage{fixltx2e}
+\documentclass[prd,twocolumn,showpacs,preprintnumbers,superscriptaddress,nofootinbib,amsmath,amssymb,floatfix,nobalancelastpage]{revtex4}
 \usepackage{graphicx}
 \usepackage{bm}
 \usepackage{dcolumn}
@@ -1050,6 +1051,26 @@ scalelength $\Rc/\Rd$ varies.
 
 \subsection{Comparisons}
 
+\begin{figure}!
+$$\includegraphics[width=0.5\textwidth]{both_round_ellcor.pdf}$$
+$$\includegraphics[width=0.5\textwidth]{both_edge_ellcor.pdf}$$
+\caption{J-factor correction factors for oblate and prolate figures
+  viewed face-on (top) and edge-on (bottom). The \textbf{black points}
+  show the numerical results from the M2M models of stellar Plummer
+  models flattened with axis ratio $q$ embedded in NFW dark-matter
+  halos also of axis ratio $q$. The \textbf{dashed green line} shows the results
+  of the virial method of Section~\ref{VirMethod}. The \textbf{blue band} shows a range of axisymmetric cusp models from Section~\ref{AxiCusps}. The central line corresponds to a model with $\gamma_\mathrm{DM}=1,\,\gamma_\star=3$. In the top panel, we have varied the slope of the light profile (note the face-on correction factor is independent of $\gamma_\mathrm{DM}$ in this case). In the bottom panel, we have varied the slope of the dark matter. In both panels, the \textbf{red band} shows a series of cored flat rotation curve models from Section~\ref{CoredModels}. The central line has outer stellar density profile of $\beta_\star=5$ and ratio of dark-matter to stellar scale radii of $R_\mathrm{d}/R_\mathrm{c}=20$. The band corresponds to varying this scale radii ratio by a factor of ten.}
+\label{fig:corrections}
+\end{figure}
+
+\begin{figure}!
+$$\includegraphics[width=0.5\textwidth]{both_round_D_ellcor.pdf}$$
+$$\includegraphics[width=0.5\textwidth]{both_edge_D_ellcor.pdf}$$
+\caption{D-factor correction factors for oblate and prolate figures
+  viewed face-on (top) and edge-on (bottom). See the caption of Figure~\ref{fig:corrections} for details on each line.}
+\label{fig:D_corrections}
+\end{figure}
+
 The models in Sections~\ref{AxiCusps} and \ref{CoredModels} are
 complementary. The infinite cusps allow us to vary the central slope of
 the dark matter. The cored models allow us to vary the ratio of the
@@ -1062,26 +1083,6 @@ function of dark halo flattening $q$ in
 Fig.~\ref{fig:corrections}. The flattening of the stellar population
 $q_\star$ is the same as that of the dark halo $q$. For all plots we use the observed parameters of Reticulum~II with a beam angle of $0.5^\circ$. The correction factors are a function of the beam angle but we have found that this dependence is very weak and that the correction factors are essentially independent of the size of the dSph with respect to the beam size. Therefore, the reported correction factors are appropriate for all beam angles.
 
-
-\begin{figure}
-$$\includegraphics[width=0.5\textwidth]{both_round_ellcor.pdf}$$
-$$\includegraphics[width=0.5\textwidth]{both_edge_ellcor.pdf}$$
-\caption{J-factor correction factors for oblate and prolate figures
-  viewed face-on (top) and edge-on (bottom). The \textbf{black points}
-  show the numerical results from the M2M models of stellar Plummer
-  models flattened with axis ratio $q$ embedded in NFW dark-matter
-  halos also of axis ratio $q$. The \textbf{dashed green line} shows the results
-  of the virial method of Section~\ref{VirMethod}. The \textbf{blue band} shows a range of axisymmetric cusp models from Section~\ref{AxiCusps}. The central line corresponds to a model with $\gamma_\mathrm{DM}=1,\,\gamma_\star=3$. In the top panel, we have varied the slope of the light profile (note the face-on correction factor is independent of $\gamma_\mathrm{DM}$ in this case). In the bottom panel, we have varied the slope of the dark matter. In both panels, the \textbf{red band} shows a series of cored flat rotation curve models from Section~\ref{CoredModels}. The central line has outer stellar density profile of $\beta_\star=5$ and ratio of dark-matter to stellar scale radii of $R_\mathrm{d}/R_\mathrm{c}=20$. The band corresponds to varying this scale radii ratio by a factor of ten.}
-\label{fig:corrections}
-\end{figure}
-
-\begin{figure}
-$$\includegraphics[width=0.5\textwidth]{both_round_D_ellcor.pdf}$$
-$$\includegraphics[width=0.5\textwidth]{both_edge_D_ellcor.pdf}$$
-\caption{D-factor correction factors for oblate and prolate figures
-  viewed face-on (top) and edge-on (bottom). See the caption of Figure~\ref{fig:corrections} for details on each line.}
-\label{fig:D_corrections}
-\end{figure}
 
 We show the
 correction factors for models viewed face-on (top panels) and edge-on

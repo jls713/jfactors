@@ -13,6 +13,7 @@ void translate(std::exception const& e)
     // Use the Python 'C' API to set up an exception object
     PyErr_SetString(PyExc_RuntimeError, e.what());
 }
+
 BOOST_PYTHON_MODULE_INIT(jfactors_py) {
   boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
   docstring_options doc_options(true);
@@ -57,6 +58,7 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "    param4: ang, vector of angles in degrees.\n"
           "    param5: print errors.\n"
           "    param6: return inside cylinder ('cylinder'), spheroid ('spheroid') or sphere ('sphere').\n"
+          "    param7: radius within which to compute dispersion"
           "\n"
           "Returns:\n"
           "    mass\n"
@@ -138,7 +140,8 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
        "Args:\n"
        "    param1: rh, half-light radius\n"
        "    param2: slos, velocity dispersion\n"
-       "    param3: dir, viewing direction -- face-on (round) or edge-on(edge)\n")
+       "    param3: dir, viewing direction -- face-on (round) or edge-on(edge)\n"
+       "    param4: vdrad, radius within which velocity dispersion measured\n")
   .def("mass_dm",&CoredModel::mass_dm,
        "Mass within sphere of radius r"
        "\n"
