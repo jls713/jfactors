@@ -39,6 +39,13 @@ DoubleProfileModel::DoubleProfileModel(double ba, double ca, double rh, double s
   Stars = new AlphaBetaGammaDensityProfile(abg_st,rho0_st,rs_st,rt_st,abc_st,true);
   DM = new AlphaBetaGammaDensityProfile(abg_dm,rho0_dm,rs_dm,rt_dm,abc_dm,true);
 }
+DoubleProfileModel::DoubleProfileModel(VecDoub axis_ratios_st, VecDoub axis_ratios_dm, double rh, double slos, bool use_multipole, double rsrdmratio, double rtdmrdmratio, double rtsrdmratio, VecDoub abg_st, VecDoub abg_dm)
+  :rh(rh),slos(slos),use_multipole(use_multipole),rsrdmratio(rsrdmratio),rtdmrdmratio(rtdmrdmratio), rtsrdmratio(rtsrdmratio), abg_st(abg_st), abg_dm(abg_dm){
+  double rs_dm = 1., rs_st = rsrdmratio, rt_st = rtsrdmratio, rt_dm=rtdmrdmratio;
+  double rho0_st = 1., rho0_dm = 1.;
+  Stars = new AlphaBetaGammaDensityProfile(abg_st,rho0_st,rs_st,rt_st,axis_ratios_st,true);
+  DM = new AlphaBetaGammaDensityProfile(abg_dm,rho0_dm,rs_dm,rt_dm,axis_ratios_dm,true);
+}
 void DoubleProfileModel::print(void){
   std::cout<<"=====\nStellar properties:\n";
   Stars->print();
@@ -247,6 +254,14 @@ double DoubleProfileModel::sigma_x_sigma_z(void){
   MultipoleExpansion MEA(&MP,150,16,16,8,2.*DM->scale_radius(),0.001*DM->scale_radius(),10.*DM->tidal_radius(),false,true,true);
   double KinematicRatio = (use_multipole?ObsStars.sigma_x_sigma_z(&MEA):ObsStars.sigma_x_sigma_z(&NFWP));
   return KinematicRatio;
+}
+VecDoub DoubleProfileModel::sigma_x_y_sigma_z(void){
+  ObservedTriaxialDensityProfile ObsStars(Stars,0.,0.);
+  VecDoub ar = DM->axis_ratios();
+  NFW NFWP(1.,DM->scale_radius(),qpot_from_q(ar[0]),qpot_from_q(ar[1]));
+  MultipoleDensity MP(DM);
+  MultipoleExpansion MEA(&MP,150,16,16,8,2.*DM->scale_radius(),0.001*DM->scale_radius(),10.*DM->tidal_radius(),false,true,true);
+  return (use_multipole?ObsStars.sigma_x_y_sigma_z(&MEA):ObsStars.sigma_x_y_sigma_z(&NFWP));
 }
 double DoubleProfileModel::radius_ratio(double theta, double phi){
 

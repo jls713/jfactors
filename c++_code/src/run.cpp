@@ -234,7 +234,7 @@ int main(){
   wyn_models_cfactor_loop("data/wyn_factor_n5_rr2",true,0.5,5.);
   wyn_models_cfactor_loop("data/wyn_factor_n5_rr20",true,0.05,5.);
   wyn_models_cfactor_loop("data/wyn_factor_n5_rr200",true,0.005,5.);
-  // cfactor_loop("fig7_gf",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,3.,1.});
+  cfactor_loop("fig7_gf",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,3.,1.});
   return 0;
   rvratio_loop("data/test",true); return 0;
   cfactor_loop("fig7_gf_betadm6",false,true,true,.5,10.,9.,{2.,5.,0.},{1.,6.,1.});

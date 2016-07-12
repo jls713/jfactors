@@ -16,14 +16,13 @@
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 using namespace boost::python;
 
-#include "../general/cuba/cuba.h"
+#include "cuba/cuba.h"
 #include <iostream>
-#include "../general/cuba/cuba.h"
 #include <cmath>
 #include <vector>
 #include <string>
 #include <stdexcept>
-#include "../general/utils.h"
+#include "utils.h"
 #include "potential.h"
 
 const double Grav = 4.300918e-6; // in units solar mass, km/s kpc

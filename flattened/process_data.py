@@ -28,7 +28,7 @@ def write_ascii(l):
 
 ## ============================================================================
 ## 1. Read in data file and write headers to tables
-data = pd.read_csv('../../../data/jfactors/data.dat',sep=' ')
+data = pd.read_csv('../data/data.dat',sep=' ')
 ff = open('corr_triax_table.dat','w')
 ffa = open('corr_triax_table_ascii.dat','w')
 ff.write('\\begin{tabular}{lcccc}\n')

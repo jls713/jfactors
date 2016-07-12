@@ -19,7 +19,7 @@ ObservedTriaxialDensityProfile::ObservedTriaxialDensityProfile(FiniteMassTriaxia
     VecDoub ar = TDP->axis_ratios();
     double ba = ar[0], ca = ar[1];
     e = observed_ellipticity(ba,ca);
-    theta_min=minor_axis_angle(ba,ca);
+    theta_min=PI-minor_axis_angle(ba,ca);
     stm=sin(theta_min);
     ctm=cos(theta_min);
   }
@@ -46,7 +46,7 @@ double ObservedTriaxialDensityProfile::minor_axis_angle(double ba, double ca){
   double T = (1.-ba*ba)/(1.-ca*ca);
   if(ba==1. and ca==1.) T=0.;
   if(T==0.) return 0.;
-  return .5*atan2((2.*T*sin(phi)*cos(phi)*cos(theta)),(sin(theta)*sin(theta)-T*cos(phi)*cos(phi)-sin(phi)*sin(phi)*cos(theta)*cos(theta)));
+  return .5*atan2((2.*T*sin(phi)*cos(phi)*cos(theta)),(sin(theta)*sin(theta)-T*(cos(phi)*cos(phi)-sin(phi)*sin(phi)*cos(theta)*cos(theta))));
 }
 
 int projected_M_integrand(const int ndim[],const double y[], const int*fdim, double fval[], void *fdata){
@@ -244,6 +244,8 @@ double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot, double radiu
     return sqrt(xx/DP->mass());
   }
   else{
+    // Is this approach actually valid?
+    std::cerr<<"Is this approach valid? Does virial theorem apply if not integrating over full volume?\n";
     VecDoub x2min = {-.5*PI,0.,0.};
     VecDoub x2max = {.5*PI,2.*PI,radius};
     sig_st P(x2min,x2max,this,Pot,0);
@@ -254,16 +256,8 @@ double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot, double radiu
 }
 
 double ObservedTriaxialDensityProfile::sigma_corr(Potential_JS *Pot){
-  VecDoub x2min = {0.,0.,0.};
-  VecDoub x2max = {PI,2.*PI,.5*PI};
-  sig_st P(x2min,x2max,this,Pot,0);
-  double err;
-  double xx = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
-  P = sig_st(x2min,x2max,this,Pot,1);
-  double yy = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
-  P = sig_st(x2min,x2max,this,Pot,2);
-  double zz = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
-  double f1 = xx/zz, f2 = yy/zz;
+  VecDoub ff = sigma_x_y_sigma_z(Pot);
+  double f1 = ff[0], f2 = ff[1];
   double st= sin(theta),ct= cos(theta),sp=sin(phi),cp=cos(phi);
   double f = ct*ct+st*st*cp*cp*f1+st*st*sp*sp*f2;
   return 3.*f/(1.+f1+f2);
@@ -278,5 +272,17 @@ double ObservedTriaxialDensityProfile::sigma_x_sigma_z(Potential_JS *Pot){
   P = sig_st(x2min,x2max,this,Pot,2);
   double zz = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
   return xx/zz;
+}
+VecDoub ObservedTriaxialDensityProfile::sigma_x_y_sigma_z(Potential_JS *Pot){
+  VecDoub x2min = {0.,0.,0.};
+  VecDoub x2max = {PI,2.*PI,.5*PI};
+  sig_st P(x2min,x2max,this,Pot,0);
+  double err;
+  double xx = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
+  P = sig_st(x2min,x2max,this,Pot,1);
+  double yy = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
+  P = sig_st(x2min,x2max,this,Pot,2);
+  double zz = integrate(&sig_integrand,&P,1e-4,0,INTEG,&err);
+  return {xx/zz,yy/zz};
 }
 //=============================================================================

@@ -128,7 +128,7 @@ TEST(ObservedProfile, SphericalNFW){
 TEST(ObservedProfile,TriaxialPlummer){
 	double rho0 = 2.3, rs = 1.053, rt = -1.;
 	double theta = 0., phi = 0.;
-	double ba=0.4001,ca=0.4;
+	double ba=0.6001,ca=0.4;
 	AlphaBetaGammaDensityProfile ABG({2.,5.,0.},rho0,rs,rt,{1.,ba,ca},false);
 	ObservedTriaxialDensityProfile OP(&ABG,theta,phi);
 	EXPECT_NEAR(ba,OP.ellipticity(),1e-5);
@@ -136,12 +136,21 @@ TEST(ObservedProfile,TriaxialPlummer){
 	double rr = OP.half_light_radius();
 	EXPECT_NEAR(rs,rr,0.001);
 	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs/2.*ba*ca,OP.M_ellipse(rr),1e-4);
-	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs*ba*ca,ABG.mass(),1e-4);
+	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs*ba*ca,ABG.mass(),2e-4);
+
+	theta = 0., phi = PI;
+	ObservedTriaxialDensityProfile OPa(&ABG,theta,phi);
+	EXPECT_NEAR(ba,OPa.ellipticity(),1e-5);
+	EXPECT_NEAR(PI/2.,OPa.minor_axis(),1e-3);
+	rr = OPa.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs/2.*ba*ca,OPa.M_ellipse(rr),1e-4);
+	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs*ba*ca,ABG.mass(),2e-4);
 
 	theta=PI/2.; phi=0.;
 	ObservedTriaxialDensityProfile OP2(&ABG,theta,phi);
 	EXPECT_NEAR(ca/ba,OP2.ellipticity(),1e-5);
-	EXPECT_NEAR(0.,OP2.minor_axis(),1e-5);
+	EXPECT_NEAR(PI,OP2.minor_axis(),1e-5);
 	rr = OP2.half_light_radius();
 	EXPECT_NEAR(rs*ba,rr,0.001);
 	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs/2.*ba*ca,OP2.M_ellipse(rr),1e-3);
@@ -149,11 +158,10 @@ TEST(ObservedProfile,TriaxialPlummer){
 	theta=PI/2.; phi=PI/2.;
 	ObservedTriaxialDensityProfile OP3(&ABG,theta,phi);
 	EXPECT_NEAR(ca,OP3.ellipticity(),1e-5);
-	EXPECT_NEAR(0.,OP3.minor_axis(),test_err);
+	EXPECT_NEAR(PI,OP3.minor_axis(),test_err);
 	rr = OP3.half_light_radius();
 	EXPECT_NEAR(rs,rr,0.001);
 	EXPECT_NEAR((4*PI)/3.*rho0*rs*rs*rs/2.*ba*ca,OP3.M_ellipse(rr),1e-3);
-
 
 	double T = ABG.Triaxiality();
 	phi=0.; theta = atan(sqrt(T/(1.-T)));
@@ -161,6 +169,124 @@ TEST(ObservedProfile,TriaxialPlummer){
 	EXPECT_NEAR(1.,OP4.ellipticity(),test_err);
 }
 
+TEST(ObservedProfile,TriaxialPlummerPhiIndep){
+	double rho0 = 2.3, rs = 1.053, rt = -1.;
+	double theta = 0.01, phi = 0.1;
+	double ba=0.5,ca=0.4;
+	AlphaBetaGammaDensityProfile ABG({2.,5.,0.},rho0,rs,rt,{1.,ba,ca},false);
+	theta = 0.0, phi = PI/2.;
+	ObservedTriaxialDensityProfile OPb(&ABG,theta,phi);
+	EXPECT_NEAR(ba,OPb.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPb.minor_axis(),1e-3);
+	double rr = OPb.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	theta = 0.0, phi = PI/2.;
+	ObservedTriaxialDensityProfile OPc(&ABG,theta,phi);
+	EXPECT_NEAR(ba,OPc.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPc.minor_axis(),1e-3);
+	rr = OPc.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	theta = PI/2., phi = PI/2.;
+	ObservedTriaxialDensityProfile OPd(&ABG,theta,phi);
+	EXPECT_NEAR(ca,OPd.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPd.minor_axis(),1e-3);
+	rr = OPd.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	theta = PI/2., phi = 0.;
+	ObservedTriaxialDensityProfile OPe(&ABG,theta,phi);
+	EXPECT_NEAR(ca/ba,OPe.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPe.minor_axis(),1e-3);
+	rr = OPe.half_light_radius();
+	EXPECT_NEAR(rs*ba,rr,0.001);
+}
+
+TEST(ObservedProfile,TriaxialPlummerProlatePhiIndep){
+	double rho0 = 2.3, rs = 1.053, rt = -1.;
+	double theta = 0.01, phi = 0.1;
+	double ba=0.40001,ca=0.4;
+	AlphaBetaGammaDensityProfile ABG({2.,5.,0.},rho0,rs,rt,{1.,ba,ca},false);
+	theta = 0.0, phi = 0.;
+	ObservedTriaxialDensityProfile OPb(&ABG,theta,phi);
+	EXPECT_NEAR(ba,OPb.ellipticity(),1e-5);
+	EXPECT_NEAR(PI/2.,OPb.minor_axis(),1e-3);
+	double rr = OPb.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	for(phi=0.;phi<PI;phi+=0.2){
+		theta = 0.0;
+		ObservedTriaxialDensityProfile OPc(&ABG,theta,phi);
+		EXPECT_NEAR(ba,OPc.ellipticity(),1e-5);
+		EXPECT_NEAR(PI/2.+phi,OPc.minor_axis(),1e-3);
+		rr = OPc.half_light_radius();
+		EXPECT_NEAR(rs,rr,0.001);
+	}
+	theta = PI/2., phi = PI/2.;
+	ObservedTriaxialDensityProfile OPd(&ABG,theta,phi);
+	EXPECT_NEAR(ca,OPd.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPd.minor_axis(),1e-3);
+	rr = OPd.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	theta = PI/2., phi = 0.;
+	ObservedTriaxialDensityProfile OPe(&ABG,theta,phi);
+	EXPECT_NEAR(ca/ba,OPe.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPe.minor_axis(),1e-3);
+	rr = OPe.half_light_radius();
+	EXPECT_NEAR(rs*ba,rr,0.001);
+}
+
+TEST(ObservedProfile,TriaxialPlummerTriaxialPhiIndep){
+	double rho0 = 2.3, rs = 1.053, rt = -1.;
+	double theta = 0.01, phi = 0.1;
+	double ba=0.70001,ca=0.4;
+	AlphaBetaGammaDensityProfile ABG({2.,5.,0.},rho0,rs,rt,{1.,ba,ca},false);
+	theta = 0.0, phi = 0.;
+	ObservedTriaxialDensityProfile OPb(&ABG,theta,phi);
+	EXPECT_NEAR(ba,OPb.ellipticity(),1e-5);
+	EXPECT_NEAR(PI/2.,OPb.minor_axis(),1e-3);
+	double rr = OPb.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	for(phi=0.;phi<PI;phi+=0.2){
+		theta = 0.0;
+		ObservedTriaxialDensityProfile OPc(&ABG,theta,phi);
+		EXPECT_NEAR(ba,OPc.ellipticity(),1e-5);
+		EXPECT_NEAR(PI/2.+phi,OPc.minor_axis(),1e-3);
+		rr = OPc.half_light_radius();
+		EXPECT_NEAR(rs,rr,0.001);
+	}
+	for(phi=0.;phi<PI;phi+=0.2){
+		theta = PI/2.;
+		ObservedTriaxialDensityProfile OPc(&ABG,theta,phi);
+		EXPECT_NEAR(PI,OPc.minor_axis(),1e-3);
+	}
+	for(theta=0.;theta<PI;theta+=0.2){
+		phi = PI/2.;
+		ObservedTriaxialDensityProfile OPc(&ABG,theta,phi);
+		EXPECT_NEAR(PI,OPc.minor_axis(),1e-3);
+	}
+	theta = PI/2., phi = PI/2.;
+	ObservedTriaxialDensityProfile OPd(&ABG,theta,phi);
+	EXPECT_NEAR(ca,OPd.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPd.minor_axis(),1e-3);
+	rr = OPd.half_light_radius();
+	EXPECT_NEAR(rs,rr,0.001);
+	theta = PI/2., phi = 0.;
+	ObservedTriaxialDensityProfile OPe(&ABG,theta,phi);
+	EXPECT_NEAR(ca/ba,OPe.ellipticity(),1e-5);
+	EXPECT_NEAR(PI,OPe.minor_axis(),1e-3);
+	rr = OPe.half_light_radius();
+	EXPECT_NEAR(rs*ba,rr,0.001);
+}
+TEST(Paper,AngleTest){
+	double rho0 = 2.3, rs = 1.053, rt = -1.;
+	double theta = 0.01, phi = 0.1;
+	double ba=0.73,ca=0.4;
+	AlphaBetaGammaDensityProfile ABG({2.,5.,0.},rho0,rs,rt,{1.,ba,ca},false);
+	theta = PI/4.;
+	for(phi=0.;phi<PI;phi+=0.2){
+		theta = 0.0;
+		ObservedTriaxialDensityProfile OPc(&ABG,theta,phi);
+		std::cout<<OPc.half_light_radius()<<std::endl;
+	}
+}
 TEST(VelocityDispersions,Spherical){
 	double rho0 = 2.3, rs = 1.053, rt = 10.;
 	double ba = 1., ca = 1.;
@@ -228,7 +354,7 @@ TEST(Jfactors,DoubleModelProlate){
 	double JJs = DD_sph.J_factor(theta,phi,D,ang,false,false)[0];
 
 	double CC = DD.correction_factor(theta,phi,D,ang,false,true);
-	EXPECT_NEAR(JJ/JJs,CC,0.005);
+	EXPECT_NEAR(JJ/JJs,CC,0.03);
 
 }
 

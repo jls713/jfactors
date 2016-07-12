@@ -23,8 +23,8 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "Model for Sanders, Evans & Geringer-Sameth (2016)\n"
           "\n"
           "Args:\n"
-          "    param1: ba axis ratio.\n"
-          "    param2: ca axis ratio.\n"
+          "    param1: stellar axes (a,b,c).\n"
+          "    param2: dm axes (a,b,c).\n"
           "    param3: rh.\n"
           "    param4: sigma_los.\n"
           "    param5: use multipole.\n"
@@ -33,7 +33,8 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "    param8: rts/rdm.\n"
           "    param9: abg_st.\n"
           "    param10: abg_dm.\n"
-          ,init<double, double, double, double, bool, double, double,double,VecDoub,VecDoub>())
+          ,init<VecDoub,VecDoub, double, double, bool, double, double,double,VecDoub,VecDoub>())
+    .def(init<double,double,double,double,bool,double,double,double,VecDoub,VecDoub>())
     .def("J_factor", &DoubleProfileModel::J_factor,
          "Compute J factor\n"
           "\n"
@@ -87,6 +88,16 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "\n"
           "Returns:\n"
           "    ellipticity\n"
+      "")
+    .def("kinematic_ratios", &DoubleProfileModel::sigma_x_y_sigma_z,
+         "Compute kinematic ratios sigma_x^2/sigma_z^2 and sigma_y^2/sigma_z^2\n"
+          "\n"
+          "Args:\n"
+          "    param1: theta, viewing angle.\n"
+          "    param2: phi, viewing angle.\n"
+          "\n"
+          "Returns:\n"
+          "    kinematic ratios\n"
       "");
   class_<PaperModel, bases<DoubleProfileModel>>("PaperModel","Model for paper", init<double,double,double,double,bool>());
 

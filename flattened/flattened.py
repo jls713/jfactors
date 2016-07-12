@@ -76,6 +76,15 @@ def check_equation_20(q,gamma=3.):
 		else:
 			Q = np.sqrt(1.-Qst)
 			G = .5*(Qst*Q*Q-np.sqrt(Qst)*Q*np.arccos(np.sqrt(Qst)))/(np.sqrt(Qst)*Q*np.arccos(np.sqrt(Qst))-Q*Q)
+	if(gamma==2.):
+		if(Qst>1.):
+			Q = np.sqrt(Qst-1.)
+			T = np.arctan(Q)
+			G = .5*(Qst*T-Q)/(Q-T)
+		else:
+			Q = np.sqrt(1.-Qst)
+			T = np.arctanh(Q)
+			G = .5*(Qst*T-Q)/(Q-T)
 	if(gamma==4.):
 		if(Qst>1.):
 			Q = np.sqrt(Qst-1.)
@@ -207,7 +216,7 @@ def both_round_pl(qrange,name='both_round.pdf',gamma_star = 2.,Dfactor=False):
 
 	wyn = load_wyn_data()
 	index = 1+Dfactor
-	l,=plt.plot(wyn[0].T[0],np.log10(wyn[1].T[index]),label=r'Core, $\beta_\star=5$, $R_d/R_c=20$',color=sns.color_palette()[2])
+	l,=plt.plot(wyn[1].T[0],np.log10(wyn[1].T[index]),label=r'Core, $\beta_\star=5$, $R_d/R_c=20$',color=sns.color_palette()[2])
 	l.set_dashes((5,1))
 	plt.fill_between(wyn[0].T[0],np.log10(wyn[0].T[index]),np.log10(wyn[2].T[index]),edgecolor="None",alpha=0.3,color=sns.color_palette()[2])
 
@@ -314,8 +323,9 @@ def both_edge_pl(qrange,name='both_edge.pdf',gamma_star = 2.,Dfactor=False,geo_f
 	l.set_dashes((3,1))
 
 	wyn = load_wyn_data()
+	print np.shape(wyn[0])
 	index = 3+Dfactor
-	l,=plt.plot(wyn[0].T[0],np.log10(wyn[1].T[index]),label=r'Core, $\beta_\star=5$, $R_d/R_c=20$',color=sns.color_palette()[2])
+	l,=plt.plot(wyn[1].T[0],np.log10(wyn[1].T[index]),label=r'Core, $\beta_\star=5$, $R_d/R_c=20$',color=sns.color_palette()[2])
 	l.set_dashes((5,1))
 	plt.fill_between(wyn[0].T[0],np.log10(wyn[0].T[index]),np.log10(wyn[2].T[index]),edgecolor="None",alpha=0.3,color=sns.color_palette()[2])
 
@@ -451,6 +461,8 @@ if __name__ == '__main__':
 	print 'Diff between eq. (20) and numerical (q=1.4,gamma=4):',check_equation_20(1.4,4.)
 	print 'Diff between eq. (20) and numerical (q=1.1,gamma=3):',check_equation_20(1.1,3.)
 	print 'Diff between eq. (20) and numerical (q=0.9,gamma=3):',check_equation_20(0.9,3.)
+	print 'Diff between eq. (20) and numerical (q=1.4,gamma=2):',check_equation_20(1.4,2.)
+	print 'Diff between eq. (20) and numerical (q=0.9,gamma=2):',check_equation_20(0.9,2.)
 
 	name = 'ellcor'
 

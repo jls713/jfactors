@@ -39,6 +39,7 @@ class DoubleProfileModel{
 public:
 
   DoubleProfileModel(double ba, double ca, double rh=0.049, double slos=3.22, bool use_multipole=true, double rsrdmratio=0.5, double rtdmrdmratio = 10., double rtsrdmratio=9., VecDoub abg_st={2.,5.,0.}, VecDoub abg_dm = {1.,3.,1.});
+  DoubleProfileModel(VecDoub axis_ratios_st, VecDoub axis_ratios_dm, double rh, double slos, bool use_multipole, double rsrdmratio, double rtdmrdmratio, double rtsrdmratio, VecDoub abg_st, VecDoub abg_dm);
   ~DoubleProfileModel(){delete Stars; delete DM;}
   /**
    * @brief nice print for model
@@ -105,6 +106,15 @@ public:
    * @return kinematic ratio
    */
   double sigma_x_sigma_z(void);
+  /**
+   * @brief ratio of sigma_x^2 to sigma_z^2 and sigma_y^2 to sigma_z^2
+   *
+   * @param theta spherical polar latitude viewing angle
+   * @param phi spherical polar azimuthal viewing angle
+   *
+   * @return kinematic ratios
+   */
+  VecDoub sigma_x_y_sigma_z(void);
     /**
    * @brief compute ratio of observed half-light major axis length to model
    * @details [long description]

@@ -31,7 +31,7 @@ def fexp(p,R,m):
 	dr = np.log(np.exp(-R/p[0])*m/p[0]/p[0])
 	return -np.sum(dr)
 def fplum(p,R,m):
-	''' Fit Plummer '''
+	''' Fit Plummer -- this gives p(R)=mass per unit radius \propto m R Sigma(R)'''
 	if(p[0]<0.):
 		return 1e10
 	dr = np.log(m*R/p[0]/p[0]/(1+(R/p[0])**2)**2)
@@ -97,14 +97,15 @@ def make_plot():
 
 	runit_am = (r0_unit/rmajsim)*60.*180./np.pi/Distance ## R unit in arcmin
 
-	## 3. Plot projected profiles
+	## 3. Plot projected profiles -- compute Sigma(R) from sims (n.b. extra
+	##    factor R)
 	n,b,p=a[1][0].hist(data['R']*runit_am,
 	                   weights=(M/MtoL)*data['m']/data['R']/runit_am/2./np.pi/(bin_max/bin_no*runit_am)/Mp,
 	                   range=[0.,bin_max*runit_am],
 	                   bins=bin_no,histtype='step',color='k')
 	bc=.5*(b[1:]+b[:-1])
 	bc = bc/(60.*180./np.pi/Distance)
-	## 3.1. Plot best-fit
+	## 3.1. Plot best-fit -- comparing Sigma(R)
 	l,=a[1][0].plot(bc*60.*180./np.pi/Distance,n[0]/(1+(bc/r0_unit)**2)**2,color=sns.color_palette()[0])
 
 	## 4. Plot velocity dispersion profiles

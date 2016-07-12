@@ -235,7 +235,6 @@ def unit_sphere(outfile,gf=True,ell=False):
 	th,ph = np.pi/2.-0.5,-np.pi/2.+0.36
 	ax.text3D(np.sin(th)*np.cos(ph),np.sin(th)*np.cos(ph),np.cos(th),r'$e=0.1$',zdir=np.array([-np.sin(ph),np.cos(ph),-1.8]),fontsize=6,color='k')
 
-	plt.show()
 	plt.savefig(outfile,bbox_inches='tight',dpi=1000)
 
 ## ===========================================================================

@@ -167,6 +167,13 @@ public:
    * @return kinematic ratio of sigma_x^2/sigma_z^2
    */
   double sigma_x_sigma_z(Potential_JS *Pot);
+  /**
+   * @brief ratio of sigma_xx^2 and sigma_yy^2 to sigma_zz^2
+   *
+   * @param Pot pointer to a Potential_JS instance
+   * @return kinematic ratio of (sigma_x^2/sigma_z^2, sigma_y^2/sigma_z^2)
+   */
+  VecDoub sigma_x_y_sigma_z(Potential_JS *Pot);
 };
 // ============================================================================
 struct obs_density_st{

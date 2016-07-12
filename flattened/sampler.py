@@ -5,7 +5,7 @@ from numpy import sqrt,cos,sin
 import emcee
 import corner
 import sys
-sys.path.append('../../../code/jfactors/')
+sys.path.append('/home/jls/work/code/jfactors/')
 import jfactors_py as jf
 import pandas as pd
 ## ============================================================================
@@ -79,6 +79,8 @@ def logl(x,e_mean,e_err,ma_prior,sj_prior):
     if p!=0.:
     	return p
     ba,ca=axis_ratios(x[0],x[1])
+    if(ca<0.05):
+        return -np.inf
     oe = observed_ellipticity(ba,ca,x[2],x[3])
     if(ma_prior):
         p+=major_axis_prior(x[2],x[3])
@@ -93,15 +95,13 @@ def logl(x,e_mean,e_err,ma_prior,sj_prior):
 
 ## ============================================================================
 ## Main function
-def samples(e_m,e_s,size,ffile,ma_prior=False,sj_prior=False,geo_factor=True):
-    ''' Generates a set of <size> samples  of (T,E,theta,phi) that produce the
-        distribution of observed ellipticity for each dwarf. For each sample
-        calculates the correction factor and outputs the results to ffile
+def compute_samples(nwalkers,e_m,e_s,ma_prior=False,sj_prior=False,withplots=False):
+    ''' Generates a set of samples  of (T,E,theta,phi) that produce the
+        distribution of observed ellipticity for each dwarf.
         ma_prior is a flag for the Major-Axis prior
         sj_prior is a flag for the Sanchez-Janssen prior
-        geo_factor uses an additional factor sqrt(1-e) in spherical model
-        '''
-    ndim,nwalkers=4,50
+    '''
+    ndim=4
     lo=[0.,0.,0.,0.]
     hi=[1.,1.,.5*np.pi,.5*np.pi]
     if(isinstance(e_s,list)):
@@ -112,17 +112,33 @@ def samples(e_m,e_s,size,ffile,ma_prior=False,sj_prior=False,geo_factor=True):
         if(e_s!=e_s):
             e_s=ett/2.
             e_m=0.
-    ### 1. Compute samples from emcee
     p0=np.array([np.random.uniform(low=lo[k],high=hi[k],size=nwalkers) for k in range(ndim)]).T
     sampler = emcee.EnsembleSampler(nwalkers,ndim,logl,args=[e_m,e_s,ma_prior,sj_prior])
     pos,prob,state=sampler.run_mcmc(p0,15000)
     sampler.reset()
     pos,prob,state=sampler.run_mcmc(pos,5000)
     samples = sampler.chain.reshape((-1,ndim))
-    fig=corner.corner(samples,labels=[r'$T$',r'$E$',r'$\theta$',r'$\phi$'])
-    fig.savefig("triangle.png")
+    if(withplots):
+        fig=corner.corner(samples,labels=[r'$T$',r'$E$',r'$\theta$',r'$\phi$'])
+        fig.savefig("triangle.png")
     print np.median(pos,axis=0),np.std(pos,axis=0)
+    return samples
 
+def samples(e_m,e_s,size,ffile,ma_prior=False,sj_prior=False,geo_factor=True,withplots=False):
+    ''' Generates a set of <size> samples  of (T,E,theta,phi) that produce the
+        distribution of observed ellipticity for each dwarf. For each sample
+        calculates the correction factor and outputs the results to ffile
+        ma_prior is a flag for the Major-Axis prior
+        sj_prior is a flag for the Sanchez-Janssen prior
+        geo_factor uses an additional factor sqrt(1-e) in spherical model
+        '''
+    ### 1. Compute samples from emcee
+    nwalkers=50
+    ellip = 1.-e_m
+    ellip_errors = e_s
+    if(isinstance(e_s,list)):
+        ellip_errors=[e_s[1],e_s[0]]
+    samples = compute_samples(nwalkers,ellip,ellip_errors,ma_prior,sj_prior,withplots)
     ### 2. Take <size> samples and compute correction factors
     samples_redux=samples[np.random.randint(len(samples),size=size)]
     ssp=jf.PaperModel(0.999,0.99,0.05,3.22,True)
@@ -130,25 +146,25 @@ def samples(e_m,e_s,size,ffile,ma_prior=False,sj_prior=False,geo_factor=True):
 
     ff = open(ffile,'w')
     for k,i in enumerate(samples_redux):
-        print i
-        ss=jf.PaperModel(ba_from_Tca(i[0],i[1]),i[1],0.05,3.22,True)
+        ba,ca=axis_ratios(i[0],i[1])
+        oe = observed_ellipticity(ba,ca,i[2],i[3])
+        print i,ba,ca,oe
+        ss=jf.PaperModel(ba,ca,0.05,3.22,True)
         if(geo_factor):
             ssp=jf.PaperModel(0.999,0.99,0.05*np.sqrt(ss.ellipticity(i[2],i[3])),3.22,True)
             Jt = ssp.J_factor(0.01,0.01,30.,0.5,False,False)[0]
         rr=np.log10(ss.J_factor(i[2],i[3],30.,0.5,False,False)[0]/Jt)
-        ba,ca=axis_ratios(i[0],i[1])
-        oe = observed_ellipticity(ba,ca,i[2],i[3])
-        ll = logl(i,e_m,e_s,ma_prior,sj_prior)
-        ff.write('%0.4f %0.4f %0.4f %0.4f %0.4f %0.4f %0.4f\n'%(i[0],i[1],i[2],i[3],rr,oe,ll))
+        ll = logl(i,ellip,ellip_errors,ma_prior,sj_prior)
+        ff.write('%0.4f %0.4f %0.4f %0.4f %0.4f %0.4f %0.4f %0.4f %0.4f\n'%(i[0],i[1],i[2],i[3],rr,oe,ba,ca,ll))
     ff.close()
 
 ## ============================================================================
 def run_grid(geo_factor=True):
     ''' For each dwarf compute sample of correction factors under the
         three assumptions and output to file '''
-    data = pd.read_csv('../data.dat',sep=' ')
+    data = pd.read_csv('../data/data.dat',sep=' ')
     N=100
-    for i in range(len(data)):
+    for i in range(24,len(data)):
         samples(data.ellip[i],[data.ellip_e1[i],data.ellip_e2[i]],N,
                 'triaxial_results/'+data.Name[i]+'_nop',False,False,
                 geo_factor=geo_factor)
@@ -162,7 +178,7 @@ def run_grid(geo_factor=True):
 def ret2(geo_factor=True):
     ''' For RetII compute sample of correction factors under the
         three assumptions and output to file (higher res than above) '''
-    data = pd.read_csv('../data.dat',sep=' ')
+    data = pd.read_csv('../data/data.dat',sep=' ')
     i=21
     samples(data.ellip[i],[data.ellip_e1[i],data.ellip_e2[i]],400,
             'triaxial_results/'+data.Name[i]+'_nop_hr',False,False,
@@ -176,5 +192,5 @@ def ret2(geo_factor=True):
 ## ============================================================================
 if __name__=="__main__":
     run_grid()
-    ret2()
+    # ret2()
 ## ============================================================================
