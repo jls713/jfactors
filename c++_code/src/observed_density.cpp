@@ -234,25 +234,13 @@ int sig_los_ellipse_integrand(const int ndim[],const double y[], const int*fdim,
   return 0;
 }
 
-double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot, double radius){
-  if(radius<0.){
-    VecDoub x2min = {0.,0.,0.};
-    VecDoub x2max = {PI,2.*PI,.5*PI};
-    sig_st P(x2min,x2max,this,Pot,0);
-    double err;
-    double xx = integrate(&sig_los_integrand,&P,1e-3,0,INTEG,&err);
-    return sqrt(xx/DP->mass());
-  }
-  else{
-    // Is this approach actually valid?
-    std::cerr<<"Is this approach valid? Does virial theorem apply if not integrating over full volume?\n";
-    VecDoub x2min = {-.5*PI,0.,0.};
-    VecDoub x2max = {.5*PI,2.*PI,radius};
-    sig_st P(x2min,x2max,this,Pot,0);
-    double err;
-    double xx = ellipticity()*integrate(sig_los_ellipse_integrand,&P,1e-3,0,INTEG,&err);
-    return sqrt(xx/M_ellipse(radius));
-  }
+double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot){
+  VecDoub x2min = {0.,0.,0.};
+  VecDoub x2max = {PI,2.*PI,.5*PI};
+  sig_st P(x2min,x2max,this,Pot,0);
+  double err;
+  double xx = integrate(&sig_los_integrand,&P,1e-3,0,INTEG,&err);
+  return sqrt(xx/DP->mass());
 }
 
 double ObservedTriaxialDensityProfile::sigma_corr(Potential_JS *Pot){
