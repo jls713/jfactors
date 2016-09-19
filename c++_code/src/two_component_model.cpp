@@ -141,7 +141,7 @@ VecDoub DoubleProfileModel::J_factor_old(double theta, double phi, double D, dou
   else return {Jfactor};
 }
 
-VecDoub DoubleProfileModel::J_factor(double theta, double phi, double D, double ang, bool gobby, bool with_D){
+VecDoub DoubleProfileModel::J_factor(double theta, double phi, double D, double ang, bool gobby, bool with_D, double veldispradius){
 
   ObservedTriaxialDensityProfile ObsStars(Stars,theta,phi);
 
@@ -151,11 +151,12 @@ VecDoub DoubleProfileModel::J_factor(double theta, double phi, double D, double 
   MultipoleExpansion_Triaxial MEA(&MP,150,16,12,8,DM->scale_radius(),0.001*DM->scale_radius(),10.*DM->tidal_radius());
 
   double Stars_Reff = ObsStars.half_light_radius();
-  double VelocityDispersion = (use_multipole?ObsStars.sigma_los(&MEA):ObsStars.sigma_los(&NFWP));
+  double VelocityDispersion = (use_multipole?ObsStars.sigma_los(&MEA,veldispradius):ObsStars.sigma_los(&NFWP,veldispradius));
 
   // Now scale
   double RadiusRatio = rh/Stars_Reff;
   double MassRatio = pow(slos/VelocityDispersion,2.)*RadiusRatio;
+
 
   double rho0_dm = DM->central_density()/pow(RadiusRatio,3.)*MassRatio;
   double rs_dm = DM->scale_radius()*RadiusRatio;
@@ -174,17 +175,17 @@ VecDoub DoubleProfileModel::J_factor(double theta, double phi, double D, double 
   else return {Jfactor};
 }
 
-VecDoub DoubleProfileModel::MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby, std::string typ){
+VecDoub DoubleProfileModel::MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby, std::string typ, double veldispradius){
 
   ObservedTriaxialDensityProfile ObsStars(Stars,theta,phi);
 
   VecDoub ar = DM->axis_ratios();
   NFW NFWP(1.,DM->scale_radius(),qpot_from_q(ar[0]),qpot_from_q(ar[1]));
   MultipoleDensity MP(DM);
-  MultipoleExpansion_Triaxial MEA(&MP,150,16,12,8,DM->scale_radius(),0.001*DM->scale_radius(),DM->tidal_radius()>0.?10.*DM->tidal_radius():100.*DM->scale_radius());
+  MultipoleExpansion_Triaxial MEA(&MP,1500,16,12,8,DM->scale_radius(),0.0001*DM->scale_radius(),DM->tidal_radius()>0.?10.*DM->tidal_radius():100.*DM->scale_radius());
 
   double Stars_Reff = ObsStars.half_light_radius();
-  double VelocityDispersion = (use_multipole?ObsStars.sigma_los(&MEA):ObsStars.sigma_los(&NFWP));
+  double VelocityDispersion = (use_multipole?ObsStars.sigma_los(&MEA,veldispradius):ObsStars.sigma_los(&NFWP,veldispradius));
 
   // Now scale
   double RadiusRatio = rh/Stars_Reff;
@@ -209,6 +210,9 @@ VecDoub DoubleProfileModel::MassProfile(double theta, double phi, double D, VecD
   else if(typ=="ellipsoid")
     for(unsigned i=0;i<ang.size();++i)
       masses[i]=DMSc.mass_ellipsoid(D*ang[i]/180.*PI);
+  else if(typ=="light ellipsoid")
+    for(unsigned i=0;i<ang.size();++i)
+      masses[i]=DMSc.mass_ellipsoid(D*ang[i]/180.*PI,Stars->axis_ratios());
   return masses;
 }
 
@@ -290,10 +294,8 @@ double DoubleProfileModel::velocity_ratio(double theta, double phi){
   return slos/VelocityDispersion;
 }
 double DoubleProfileModel::sigma_tot(void){
-  VecDoub ar = DM->axis_ratios();
-  NFW NFWP(1.,DM->scale_radius(),qpot_from_q(ar[0]),qpot_from_q(ar[1]));
   MultipoleDensity MP(DM);
-  MultipoleExpansion_Triaxial MEA(&MP,150,16,12,8,DM->scale_radius(),0.001*DM->scale_radius(),10.*DM->tidal_radius());
+  MultipoleExpansion_Triaxial MEA(&MP,1500,16,12,8,DM->scale_radius(),0.0001*DM->scale_radius(),DM->tidal_radius()>0.?10.*DM->tidal_radius():100.*DM->scale_radius());
   return Stars->sigma_tot(&MEA);
 }
 double DoubleProfileModel::spherical_rh(void){

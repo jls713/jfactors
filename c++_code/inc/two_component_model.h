@@ -56,9 +56,10 @@ public:
    * @param ang beam angle in deg
    * @param gobby print progress flag
    * @param with_D also compute D
+   * @param veldispradius -- radius within which to compute sigma_los
    * @return vector of J (and D if required)
    */
-  VecDoub J_factor(double theta, double phi, double D, double ang, bool gobby = true, bool with_D = false);
+  VecDoub J_factor(double theta, double phi, double D, double ang, bool gobby = true, bool with_D = false, double veldispradius=-1.);
   VecDoub J_factor_old(double theta, double phi, double D, double ang, bool gobby = true, bool with_D = false);
     /**
    * @brief compute mass
@@ -71,9 +72,10 @@ public:
    * @param gobby print progress flag
    * @param typ mass inside cylinder ('cylinder'), inside ellipsoid
    * ('ellipsoid') or inside sphere ('sphere')
+   * @param veldispradius -- radius within which to compute sigma_los
    * @return mass
    */
-  VecDoub MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby = true, std::string typ="cylinder");
+  VecDoub MassProfile(double theta, double phi, double D, VecDoub ang, bool gobby = true, std::string typ="cylinder", double veldispradius=-1.);
     /**
    * @brief compute J-factor correction factor
    *

@@ -19,12 +19,12 @@ def write(l):
 	''' Output median and \pm 1\sigma errors for correction factors in ascii
 		form '''
 	l = l.T[4]
-	return r'$%0.3f^{+%0.3f}_{-%0.3f}$'%(np.median(l),np.percentile(l,84.1)-np.median(l),np.median(l)-np.percentile(l,15.9))
+	return r'$%0.2f^{+%0.2f}_{-%0.2f}$'%(np.median(l),np.percentile(l,84.1)-np.median(l),np.median(l)-np.percentile(l,15.9))
 def write_ascii(l):
 	''' Output median and \pm 1\sigma errors for correction factors in latex
 		form '''
 	l = l.T[4]
-	return '%0.3f %0.3f %0.3f '%(np.median(l),np.percentile(l,84.1)-np.median(l),np.median(l)-np.percentile(l,15.9))
+	return '%0.2f %0.2f %0.2f '%(np.median(l),np.percentile(l,84.1)-np.median(l),np.median(l)-np.percentile(l,15.9))
 
 ## ============================================================================
 ## 1. Read in data file and write headers to tables

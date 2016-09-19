@@ -218,6 +218,15 @@ public:
    * @return mass inside ellipsoid
    */
   double mass_ellipsoid(double r);
+  /**
+   * @brief mass inside an ellipsoid
+   * @details mass in ellipsoid (with axis ratios ar) of major axis
+   * length r
+   *
+   * @param r major axis length
+   * @return mass inside ellipsoid
+   */
+  double mass_ellipsoid(double r, VecDoub ar);
 };
 
 // ============================================================================
@@ -282,7 +291,7 @@ public:
 
 // ============================================================================
 
-struct density_st{
+struct densityJF_st{
   DensityProfile *DP;
   VecDoub x2min,x2max;
   double D;
@@ -297,7 +306,7 @@ struct density_st{
    * @param D distance
    * @param los line-of-sight string (='x','y','z')
    */
-  density_st(VecDoub x2min,VecDoub x2max,
+  densityJF_st(VecDoub x2min,VecDoub x2max,
              DensityProfile *DP,double D,std::string los)
     :x2min(x2min),x2max(x2max),DP(DP),D(D),los(los){}
 };
@@ -317,6 +326,21 @@ struct mass_density_st{
   mass_density_st(VecDoub x2min,VecDoub x2max,
                   FiniteMassTriaxialDensityProfile *DP,double D)
     :x2min(x2min),x2max(x2max),DP(DP),D(D){}
+};
+struct mass_density_diff_shape_st: mass_density_st{
+  VecDoub ar;
+  /**
+   * @brief structure for mass inside ellipsoid of arbitrary shape for FiniteMassTriaxialDensityProfile
+   *
+   * @param x2min vector of lower integration limits
+   * @param x2max vector of upper integration limits
+   * @param DP pointer to FiniteMassDensityProfile
+   * @param D distance
+   * @param ar axis ratios of ellipsoid
+   */
+  mass_density_diff_shape_st(VecDoub x2min,VecDoub x2max,
+                  FiniteMassTriaxialDensityProfile *DP,double D,VecDoub ar)
+    :mass_density_st(x2min,x2max,DP,D),ar(ar){}
 };
 struct sigt_st{
   FiniteMassTriaxialDensityProfile *D;

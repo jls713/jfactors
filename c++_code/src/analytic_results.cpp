@@ -247,9 +247,9 @@ double CoredModel::D_factor_arbitrary(double D, double ang, double theta, double
 	return GG.D_far_arbitrary_orientation(D,ang);
 }
 
-double CoredModel::sigma_los(double theta, double phi, double radius){
+double CoredModel::sigma_los(double theta, double phi){
 	ObservedTriaxialDensityProfile ObsStars(&staaars,theta,phi);
-	return ObsStars.sigma_los(&dm,radius);
+	return ObsStars.sigma_los(&dm);
 }
 
 double CoredModel::sigma_los_m(double theta, double phi){
@@ -258,21 +258,22 @@ double CoredModel::sigma_los_m(double theta, double phi){
   	MultipoleExpansion_Triaxial MEA(&MP,150,16,12,8,dm.scale_radius(),0.001*dm.scale_radius(),100.*dm.scale_radius());
 	return ObsStars.sigma_los(&MEA);
 }
-void CoredModel::scale(double rh, double slos, std::string dir, double vdrad){
+void CoredModel::scale(double rh, double slos, std::string dir, double veldispradius){
+
 	double theta=0.,phi=0.;
 	if(dir=="round"){ theta=0.; phi=0.;}
 	if(dir=="edge"){ theta=.5*PI; phi=0.;}
 
 	ObservedTriaxialDensityProfile ObsStars(&staaars,theta,phi);
 	double Rh = half_light_radius();
-	double VD = ObsStars.sigma_los(&dm,vdrad/rh*Rh);
+	double VD = ObsStars.sigma_los(&dm,veldispradius);
 	// If viewing a prolate model edge-on, the measured major axis half-light
 	// radius is the (half-light-radius of the spherical model)*q (where q>1)
 	if(staaars.axis_ratios()[1]>1. and dir=="edge")
 		{Rh=Rh*staaars.axis_ratios()[1];}
 	double RadiusRatio = rh/Rh;
 	double VelRatio = slos/VD;
-	std::cout<<RadiusRatio<<" "<<VelRatio<<std::endl;
+
 	double MassRatio = pow(VelRatio,2.)*RadiusRatio;
     staaars = AlphaBetaGammaDensityProfile(staaars.alpha_beta_gamma(),
 					staaars.central_density()/pow(RadiusRatio,3.)*MassRatio,

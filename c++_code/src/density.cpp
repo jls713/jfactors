@@ -11,7 +11,7 @@
 
 int M_integrand(const int ndim[],const double sphpol_scl[], const int*fdim, double fval[], void *fdata){
   double sphpol[3]; VecDoub X(3,0.);
-  density_st *P = (density_st *) fdata;
+  densityJF_st *P = (densityJF_st *) fdata;
   // scale to integration range
   for(int i=0;i<3;i++)
     sphpol[i]=(P->x2max[i]-P->x2min[i])*sphpol_scl[i]+P->x2min[i];
@@ -25,7 +25,7 @@ int M_integrand(const int ndim[],const double sphpol_scl[], const int*fdim, doub
 
 int J_integrand(const int ndim[],const double cylpol_scl[], const int*fdim, double fval[], void *fdata){
   double cylpol[3]; VecDoub X(3,0.);
-  density_st *P = (density_st *) fdata;
+  densityJF_st *P = (densityJF_st *) fdata;
   // scale to integration range
   for(int i=0;i<3;i++)
     cylpol[i]=(P->x2max[i]-P->x2min[i])*cylpol_scl[i]+P->x2min[i];
@@ -44,7 +44,7 @@ int J_integrand(const int ndim[],const double cylpol_scl[], const int*fdim, doub
 int J_farfield_integrand(const int ndim[],const double cylpol_scl[], const int*fdim, double fval[], void *fdata){
   // small angle, distant
   double cylpol[3]; VecDoub X(3,0.);
-  density_st *P = (density_st *) fdata;
+  densityJF_st *P = (densityJF_st *) fdata;
   // scale to integration range
   for(int i=0;i<3;i++)
     cylpol[i]=(P->x2max[i]-P->x2min[i])*cylpol_scl[i]+P->x2min[i];
@@ -61,7 +61,7 @@ int J_farfield_integrand(const int ndim[],const double cylpol_scl[], const int*f
 }
 int D_integrand(const int ndim[],const double cylpol_scl[], const int*fdim, double fval[], void *fdata){
   double cylpol[3]; VecDoub X(3,0.);
-  density_st *P = (density_st *) fdata;
+  densityJF_st *P = (densityJF_st *) fdata;
   // scale to integration range
   for(int i=0;i<3;i++)
     cylpol[i]=(P->x2max[i]-P->x2min[i])*cylpol_scl[i]+P->x2min[i];
@@ -79,7 +79,7 @@ int D_integrand(const int ndim[],const double cylpol_scl[], const int*fdim, doub
 
 int D_farfield_integrand(const int ndim[],const double cylpol_scl[], const int*fdim, double fval[], void *fdata){
   double cylpol[3]; VecDoub X(3,0.);
-  density_st *P = (density_st *) fdata;
+  densityJF_st *P = (densityJF_st *) fdata;
   // scale to integration range
   for(int i=0;i<3;i++)
     cylpol[i]=(P->x2max[i]-P->x2min[i])*cylpol_scl[i]+P->x2min[i];
@@ -104,7 +104,7 @@ double DensityProfile::M_sphere(double D, double ang){
   ang = ang/180.*PI;
   VecDoub x2min = {0.,0.,   0.};
   VecDoub x2max = {PI,2.*PI,D*ang};
-  density_st P(x2min,x2max,this,D,"");
+  densityJF_st P(x2min,x2max,this,D,"");
   double err;
   return integrate(&M_integrand,&P,1e-5,0,INTEG,&err);
 }
@@ -113,7 +113,7 @@ double DensityProfile::J_factor(double D, double ang, std::string los){
   ang = ang/180.*PI;
   VecDoub x2min = {-.5*PI,0.,   0.};
   VecDoub x2max = {.5*PI, 2.*PI,ang};
-  density_st P(x2min,x2max,this,D,los);
+  densityJF_st P(x2min,x2max,this,D,los);
   double err;
   return integrate(&J_integrand,&P,1e-4,0,INTEG,&err);
 }
@@ -122,7 +122,7 @@ double DensityProfile::J_far_factor(double D, double ang, std::string los){
   ang = ang/180.*PI;
   VecDoub x2min = {-.5*PI,0.,0.};
   VecDoub x2max = { .5*PI,2.*PI,ang*D};
-  density_st P(x2min,x2max,this,D,los);
+  densityJF_st P(x2min,x2max,this,D,los);
   double err;
   return integrate(&J_farfield_integrand,&P,5e-4,0,INTEG,&err)/D/D;
 }
@@ -131,7 +131,7 @@ double DensityProfile::D_factor(double D, double ang, std::string los){
   ang = ang/180.*PI;
   VecDoub x2min = {-.5*PI,0.,0.};
   VecDoub x2max = {.5*PI,2.*PI,ang};
-  density_st P(x2min,x2max,this,D,los);
+  densityJF_st P(x2min,x2max,this,D,los);
   double err;
   return integrate(&D_integrand,&P,1e-4,0,INTEG,&err);
 }
@@ -141,7 +141,7 @@ double DensityProfile::D_far_factor(double D, double ang, std::string los){
   ang = ang/180.*PI;
   VecDoub x2min = {-.5*PI,0.,0.};
   VecDoub x2max = {.5*PI,2.*PI,ang*D};
-  density_st P(x2min,x2max,this,D,los);
+  densityJF_st P(x2min,x2max,this,D,los);
   double err;
   return integrate(&D_farfield_integrand,&P,1e-4,0,INTEG,&err)/D/D;
 }
@@ -238,6 +238,30 @@ double FiniteMassTriaxialDensityProfile::mass_ellipsoid(double r){
   mass_density_st P(x2min,x2max,this,0.);
   double err;
   return ba*ca*integrate(&M_ell_integrand,&P,1e-3,0,"Cuhre",&err);
+}
+
+int M_ell_diff_shape_integrand(const int ndim[],const double sphpol_scl[], const int*fdim, double fval[], void *fdata){
+  double sphpol[3]; VecDoub X(3,0.);
+  mass_density_diff_shape_st *P = (mass_density_diff_shape_st *) fdata;
+  // scale to integration range
+  for(int i=0;i<3;i++)
+    sphpol[i]=(P->x2max[i]-P->x2min[i])*sphpol_scl[i]+P->x2min[i];
+  ;
+  VecDoub ar = P->ar;
+  X[0] = sphpol[2]*sin(sphpol[0])*cos(sphpol[1]);
+  X[1] = ar[0]*sphpol[2]*sin(sphpol[0])*sin(sphpol[1]);
+  X[2] = ar[1]*sphpol[2]*cos(sphpol[0]);
+  double r = P->DP->rho(X);
+  fval[0]=sin(sphpol[0])*r*sphpol[2]*sphpol[2];
+  return 0;
+}
+
+double FiniteMassTriaxialDensityProfile::mass_ellipsoid(double r, VecDoub ar){
+  VecDoub x2min = {0.,0.,0.};
+  VecDoub x2max = {PI,2.*PI,r};
+  mass_density_diff_shape_st P(x2min,x2max,this,0.,ar);
+  double err;
+  return ar[0]*ar[1]*integrate(&M_ell_diff_shape_integrand,&P,1e-3,0,"Cuhre",&err);
 }
 
 int sig_tot_integrand(const int ndim[],const double y[], const int*fdim, double fval[], void *fdata){

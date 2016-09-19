@@ -45,6 +45,7 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "    param4: ang, in degrees.\n"
           "    param5: print errors.\n"
           "    param6: return D-factor as well.\n"
+          "    param7: radius within which to compute veldisp -- assumes DF (see code).\n"
           "\n"
           "Returns:\n"
           "    vector of J-factor (and D-factor if required)\n"
@@ -59,7 +60,6 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "    param4: ang, vector of angles in degrees.\n"
           "    param5: print errors.\n"
           "    param6: return inside cylinder ('cylinder'), spheroid ('spheroid') or sphere ('sphere').\n"
-          "    param7: radius within which to compute dispersion"
           "\n"
           "Returns:\n"
           "    mass\n"
@@ -98,7 +98,9 @@ BOOST_PYTHON_MODULE_INIT(jfactors_py) {
           "\n"
           "Returns:\n"
           "    kinematic ratios\n"
-      "");
+      "")
+    .def("sigma_tot", &DoubleProfileModel::sigma_tot,
+         "Compute the total velocity dispersion");
   class_<PaperModel, bases<DoubleProfileModel>>("PaperModel","Model for paper", init<double,double,double,double,bool>());
 
   class_<DensityProfile, boost::noncopyable>("DensityProfile",no_init);

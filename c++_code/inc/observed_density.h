@@ -8,6 +8,7 @@
 #include <string>
 #include "../general/utils.h"
 #include "density.h"
+#include "edd_inv.h"
 #include "observed_density.h"
 // ============================================================================
 
@@ -148,9 +149,10 @@ public:
    * @details velocity dispersion along the line-of-sight
    *
    * @param Pot pointer to a Potential_JS instance
+   * @param veldispradius -- radius within which to compute vel. disp. (assumes L^{-0.4}f(E) model)
    * @return l.o.s. velocity dispersion
    */
-  double sigma_los(Potential_JS *Pot);
+  double sigma_los(Potential_JS *Pot, double veldispradius=-1.);
   /**
    * @brief kinematic correction
    * @details ratio of sigma_los^2/sigma_tot^2

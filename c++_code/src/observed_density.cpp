@@ -234,13 +234,30 @@ int sig_los_ellipse_integrand(const int ndim[],const double y[], const int*fdim,
   return 0;
 }
 
-double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot){
-  VecDoub x2min = {0.,0.,0.};
-  VecDoub x2max = {PI,2.*PI,.5*PI};
-  sig_st P(x2min,x2max,this,Pot,0);
-  double err;
-  double xx = integrate(&sig_los_integrand,&P,1e-3,0,INTEG,&err);
-  return sqrt(xx/DP->mass());
+class SphericalDensityWrapper:public SphericalDensity{
+private:
+  ObservedTriaxialDensityProfile *D;
+public:
+  SphericalDensityWrapper(ObservedTriaxialDensityProfile *d):D(d){}
+  double radial_density(double r){return D->rho({r,0.,0.});}
+};
+
+double ObservedTriaxialDensityProfile::sigma_los(Potential_JS *Pot, double veldispradius){
+  if(veldispradius<0.){
+    VecDoub x2min = {0.,0.,0.};
+    VecDoub x2max = {PI,2.*PI,.5*PI};
+    sig_st P(x2min,x2max,this,Pot,0);
+    double err;
+    double xx = integrate(&sig_los_integrand,&P,1e-3,0,INTEG,&err);
+    return sqrt(xx/DP->mass());
+  }
+  else{
+    std::cerr<<"Only appropriate for spherical models -- using beta=-0.2 anisotropic.\n";
+    FakeSphericalPotential FSP(Pot);
+    SphericalDensityWrapper FSD(this);
+    AnisotropicDF DF(&FSD,&FSP,-0.2,1000,0.,0.001*scale_radius(),1000.*scale_radius());
+    return DF.projected_integrated_veldisp(veldispradius,{0.,0.},1e-4);
+  }
 }
 
 double ObservedTriaxialDensityProfile::sigma_corr(Potential_JS *Pot){

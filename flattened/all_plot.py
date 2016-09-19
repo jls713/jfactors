@@ -27,7 +27,7 @@ plt.xticks(np.arange(-1.,len(g))+1., map(lambda i:posh_names[i],nam), rotation='
 plt.legend(ncol=3)
 l=plt.axhline(0.,color='gray')
 l.set_dashes((2,1))
-plt.ylim(-.5,1.)
+plt.ylim(-.5,.8)
 plt.ylabel(r'$\mathcal{F}_\mathrm{J}$')
 plt.savefig('corr_triax_all.pdf',bbox_inches='tight')
 
